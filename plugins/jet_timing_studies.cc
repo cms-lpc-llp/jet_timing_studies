@@ -1,10 +1,10 @@
 // -*- C++ -*-
-// Class:      JetNtupler
+// Class:      jet_timing_studies
 /*
-  Description: Base class for miniAOD analysis with CRAB
+  Description: Base class for AOD analysis with CRAB
 */
-//         Author:  Caltech razor team
-//         Created:  Thu, 17 Jul 2014 15:00:06 GMT
+//         Author:  Cristian Pena
+//         Created:  Tue, 26 March 2019 15:00:06 GMT
 
 #include "jet_timing_studies.h"
 //------ Constructors and destructor ------//
