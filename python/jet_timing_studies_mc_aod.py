@@ -16,7 +16,7 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 
 
 #initialize the process
-process = cms.Process("JetNtupler")
+process = cms.Process("JetTimingStudies")
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load("PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff")
 process.load("Configuration.EventContent.EventContent_cff")
@@ -35,11 +35,11 @@ process.source = cms.Source("PoolSource",
 
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(101) )
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 #TFileService for output
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('jetNtuple_M-500_CTau-1000mm_pt20.root'),
+	fileName = cms.string('jet_timing_studies_ntuple.root'),
     closeFileFast = cms.untracked.bool(True)
 )
 
@@ -74,7 +74,7 @@ process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
 #------ Analyzer ------#
 
 #list input collections
-process.ntuples = cms.EDAnalyzer('JetNtupler',
+process.ntuples = cms.EDAnalyzer('jet_timing_studies',
     isData = cms.bool(False),
     useGen = cms.bool(True),
     isFastsim = cms.bool(False),
@@ -84,7 +84,7 @@ process.ntuples = cms.EDAnalyzer('JetNtupler',
     isQCD = cms.bool(False),
     isFourJet = cms.bool(True), #false means glueball model, true means four-jet model 
     genParticles_t0 = cms.InputTag("genParticles", "t0", ""),
-    triggerPathNamesFile = cms.string("cms_lpc_llp/llp_ntupler/data/trigger_names_llp_v1.dat"),
+    triggerPathNamesFile = cms.string("cms_lpc_llp/jet_timing_studies/data/trigger_names_llp_v1.dat"),
     eleHLTFilterNamesFile = cms.string("SUSYBSMAnalysis/RazorTuplizer/data/RazorElectronHLTFilterNames.dat"),
     muonHLTFilterNamesFile = cms.string("SUSYBSMAnalysis/RazorTuplizer/data/RazorMuonHLTFilterNames.dat"),
     photonHLTFilterNamesFile = cms.string("SUSYBSMAnalysis/RazorTuplizer/data/RazorPhotonHLTFilterNames.dat"),

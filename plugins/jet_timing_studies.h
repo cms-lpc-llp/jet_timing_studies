@@ -6,8 +6,8 @@ Description: Base class for miniAOD analysis with CRAB
 //         Author:  FNAL/Caltech LLP Team
 //         Created:  Wed, 13 Geb 2019 15:00:06 GMT
 
-#ifndef RAZORTUPLIZER_H
-#define RAZORTUPLIZER_H
+#ifndef JET_TIMING_STUDIES_TUPLIZER_H
+#define JET_TIMING_STUDIES_TUPLIZER_H
 
 // system include files
 #include <memory>
@@ -107,11 +107,11 @@ using namespace std;
 
 //------ Class declaration ------//
 
-class JetNtupler : public edm::EDAnalyzer {
+class jet_timing_studies : public edm::EDAnalyzer {
 public:
   //analyzer constructor and destructor
-  explicit JetNtupler(const edm::ParameterSet&);
-  ~JetNtupler();
+  explicit jet_timing_studies(const edm::ParameterSet&);
+  ~jet_timing_studies();
 
   void loadEvent(const edm::Event& iEvent); //call at the beginning of each event to get input handles from the python config
   virtual void resetBranches();
