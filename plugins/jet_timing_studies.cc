@@ -41,6 +41,8 @@ jet_timing_studies::jet_timing_studies(const edm::ParameterSet& iConfig):
   hepMCToken_(consumes<edm::HepMCProduct>(iConfig.getParameter<edm::InputTag>("hepMC"))),
   //triggerObjectsToken_(consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("triggerObjects"))),
   //triggerPrescalesToken_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("triggerPrescales"))),
+  genMetCaloToken_(consumes<reco::GenMETCollection>(iConfig.getParameter<edm::InputTag>("genMetsCalo"))),
+  genMetTrueToken_(consumes<reco::GenMETCollection>(iConfig.getParameter<edm::InputTag>("genMetsTrue"))),
   metToken_(consumes<reco::PFMETCollection>(iConfig.getParameter<edm::InputTag>("mets"))),
 //  metNoHFToken_(consumes<reco::PFMETCollection>(iConfig.getParameter<edm::InputTag>("metsNoHF"))),
   metPuppiToken_(consumes<reco::PFMETCollection>(iConfig.getParameter<edm::InputTag>("metsPuppi"))),
@@ -144,7 +146,7 @@ void jet_timing_studies::setBranches(){
   llpTree->Branch("eventNum", &eventNum, "eventNum/i");
   llpTree->Branch("pvX", &pvX, "pvX/F");
   llpTree->Branch("pvY", &pvY, "pvY/F");
-  llpTree->Branch("pvZ", &pvZ, "pvZ/F");
+  llpTree->Branch("pvZ", &pvZ, nJets"pvZ/F");
   llpTree->Branch("nPV", &nPV, "nPV/I");
   llpTree->Branch("Rho", &Rho, "Rho/F");
   llpTree->Branch("nPU", &nPU, "nPU/I");
@@ -322,8 +324,10 @@ void jet_timing_studies::enableMCBranches(){
   llpTree->Branch("genJetEta", genJetEta, "genJetEta[nGenJets]/F");
   llpTree->Branch("genJetPhi", genJetPhi, "genJetPhi[nGenJets]/F");
   llpTree->Branch("genJetME", genJetME, "genJetME[nGenJets]/F");
-  llpTree->Branch("genMetPt", &genMetPt, "genMetPt/F");
-  llpTree->Branch("genMetPhi", &genMetPhi, "genMetPhi/F");
+  llpTree->Branch("genMetPtCalo", &genMetPtCalo, "genMetPtCalo/F");
+  llpTree->Branch("genMetPhiCalo", &genMetPhiCalo, "genMetPhiCalo/F");
+  llpTree->Branch("genMetPtTrue", &genMetPtTrue, "genMetPtTrue/F");
+  llpTree->Branch("genMetPhiTrue", &genMetPhiTrue, "genMetPhiTrue/F");
   llpTree->Branch("genVertexX", &genVertexX, "genVertexX/F");
   llpTree->Branch("genVertexY", &genVertexY, "genVertexY/F");
   llpTree->Branch("genVertexZ", &genVertexZ, "genVertexZ/F");
@@ -440,6 +444,8 @@ void jet_timing_studies::loadEvent(const edm::Event& iEvent){//load all miniAOD 
   iEvent.getByToken(jetsToken_, jets);
   iEvent.getByToken(jetsPuppiToken_, jetsPuppi);
   iEvent.getByToken(jetsAK8Token_, jetsAK8);
+  iEvent.getByToken(genMetCaloToken_, genMetsCalo);
+  iEvent.getByToken(genMetTrueToken_, genMetsTrue);
   iEvent.getByToken(metToken_, mets);
   //iEvent.getByToken(metNoHFToken_, metsNoHF);
   iEvent.getByToken(metPuppiToken_, metsPuppi);
@@ -657,6 +663,10 @@ void jet_timing_studies::reset_gen_jet_variable()
     genJet_match_jet_index[i] = 666;
     genJet_min_delta_r_match_jet[i] = -666.;
   }
+  genMetPtCalo  = -666.;
+  genMetPhiCalo = -666.;
+  genMetPtTrue  = -666.;
+  genMetPhiTrue = -666.;
   return;
 };
 void jet_timing_studies::reset_qcd_variables()
@@ -1201,7 +1211,13 @@ bool jet_timing_studies::fillMC()
     nGenJets++;
   }
 
+  const reco::GenMET &GenMetCalo = genMetsCalo->front();
+  genMetPtCalo  = GenMetCalo.pt();
+  genMetPhiCalo = GenMetCalo.phi();
 
+  const reco::GenMET &GenMetTrue = genMetsTrue->front();
+  genMetPtTrue  = GenMetTrue.pt();
+  genMetPhiTrue = GenMetTrue.phi();
   bool foundGenVertex = false;
   for(size_t i=0; i<genParticles->size();i++)
   {
