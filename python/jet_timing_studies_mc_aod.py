@@ -29,11 +29,31 @@ process.source = cms.Source("PoolSource",
 	#'/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/143C8F1C-D3B0-E711-87D6-FA163EA92854.root',
         #'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-1000mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/FCCC0FEA-D4B0-E711-BCEB-0CC47AD98BF0.root'
 	#'file:/mnt/hadoop/store/mc/RunIISummer17DRStdmix/XXTo4J_M-500_CTau-3mm_TuneCUETP8M1_13TeV_pythia8/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/00000/DCAA63C0-C3AC-E711-89BC-0CC47A13D3A8.root'
-	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_step2_1.root',
-        'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_step2_2.root',
-        'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_step2_3.root',
-        'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_step2_4.root',
-        'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Toveve_step2_5.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_step2_1.root',
+#        'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_step2_2.root',
+#        'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_step2_3.root',
+#        'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_step2_4.root',
+#        'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190207_045505/0000/ppTohjjToSS1SS2_SS1Tobb_SS2Tobb_step2_5.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohzToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190206_060816/0000/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_step2_1.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohzToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190206_060816/0000/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_step2_2.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohzToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190206_060816/0000/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_step2_3.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohzToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190206_060816/0000/ppTohzToSS1SS2_SS1Tobb_SS2Tobb_step2_4.root',
+	#'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohwToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohwToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohwToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190218_051935/0000/ppTohwToSS1SS2_SS1Tobb_SS2Tobb_step2_1.root',
+	#'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohwToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohwToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohwToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190218_051935/0000/ppTohwToSS1SS2_SS1Tobb_SS2Tobb_step2_4.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190121_004557/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_m_10_pl_10_ev_10000_step2_1.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190121_004557/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_m_10_pl_10_ev_10000_step2_2.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190121_004557/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_m_10_pl_10_ev_10000_step2_3.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunII2016/ppTohToSS1SS2_SS1Tobb_SS2Tobb_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000/crab_CMSSW_8_0_31_ppTohToSS1SS2_SS1Tobb_SS2Tobb_run_m50_pl1000_ev10000_DR-AODSIM_CaltechT2/190121_004557/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_m_10_pl_10_ev_10000_step2_4.root',
+
+#	'file:/mnt/hadoop/store/user/christiw/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_withISR_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_withISR_mh2000_mx975_pl1000_ev100000/crab_CMSSW_8_0_21_ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_ISR_mh2000_mx975_pl1000_ev100000_AOD_CaltechT2/190329_062549/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_step2_1.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_withISR_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_withISR_mh2000_mx975_pl1000_ev100000/crab_CMSSW_8_0_21_ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_ISR_mh2000_mx975_pl1000_ev100000_AOD_CaltechT2/190329_062549/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_step2_2.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_withISR_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_withISR_mh2000_mx975_pl1000_ev100000/crab_CMSSW_8_0_21_ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_ISR_mh2000_mx975_pl1000_ev100000_AOD_CaltechT2/190329_062549/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_step2_3.root',
+#	'file:/mnt/hadoop/store/user/christiw/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_withISR_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_withISR_mh2000_mx975_pl1000_ev100000/crab_CMSSW_8_0_21_ppTohToSS1SS2_SS1Tobb_SS2Tobb_vbfh_ISR_mh2000_mx975_pl1000_ev100000_AOD_CaltechT2/190329_062549/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_step2_4.root',
+
+
+
+
+
 
     ),
 )
@@ -44,7 +64,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 #TFileService for output
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('jet_timing_studies_ntuple_vbfh_M-50_CTau-1000mm.root'),
+	fileName = cms.string('jet_timing_studies_ntuple_bbbb_vbfh_ISR_mh2000_mx975_pl1000_ev100000.root'),
     closeFileFast = cms.untracked.bool(True)
 )
 
@@ -84,8 +104,8 @@ process.ntuples = cms.EDAnalyzer('jet_timing_studies',
     useGen = cms.bool(True),
     isFastsim = cms.bool(False),
     enableTriggerInfo = cms.bool(True),
-    enableRecHitInfo = cms.bool(False),
-    readGenVertexTime = cms.bool(False),#needs to be false for glueball samples
+    enableRecHitInfo = cms.bool(True),
+    readGenVertexTime = cms.bool(True),#needs to be false for glueball samples
     isQCD = cms.bool(False),
     isFourJet = cms.bool(False), #false means glueball model, true means four-jet model 
     genParticles_t0 = cms.InputTag("genParticles", "t0", ""),

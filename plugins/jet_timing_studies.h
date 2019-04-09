@@ -171,7 +171,7 @@ protected:
   string eleHLTFilterNamesFile_;
   string muonHLTFilterNamesFile_;
   string photonHLTFilterNamesFile_;
-  static const int NTriggersMAX = 601;
+  static const int NTriggersMAX = 982;
   string triggerPathNames[NTriggersMAX];
   static const int MAX_ElectronHLTFilters = 100;
   string eleHLTFilterNames[MAX_ElectronHLTFilters];
@@ -315,6 +315,10 @@ protected:
 
   //AK4 Jets
   int nJets;
+  float pfMetE;
+  float pfMetEta;
+  float pfMetPt;
+  float pfMetPhi;
   float jetE[OBJECTARRAYSIZE];
   float jetPt[OBJECTARRAYSIZE];
   float jetEta[OBJECTARRAYSIZE];
@@ -485,8 +489,12 @@ float genJetEta[OBJECTARRAYSIZE];
 float genJetPhi[OBJECTARRAYSIZE];
 float genMetPtCalo;
 float genMetPhiCalo;
+float genMetECalo;
+float genMetEtaCalo;
 float genMetPtTrue;
 float genMetPhiTrue;
+float genMetETrue;
+float genMetEtaTrue;
 float genVertexX;
 float genVertexY;
 float genVertexZ;

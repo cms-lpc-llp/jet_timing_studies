@@ -146,7 +146,7 @@ void jet_timing_studies::setBranches(){
   llpTree->Branch("eventNum", &eventNum, "eventNum/i");
   llpTree->Branch("pvX", &pvX, "pvX/F");
   llpTree->Branch("pvY", &pvY, "pvY/F");
-  llpTree->Branch("pvZ", &pvZ, nJets"pvZ/F");
+  llpTree->Branch("pvZ", &pvZ, "pvZ/F");
   llpTree->Branch("nPV", &nPV, "nPV/I");
   llpTree->Branch("Rho", &Rho, "Rho/F");
   llpTree->Branch("nPU", &nPU, "nPU/I");
@@ -186,7 +186,10 @@ void jet_timing_studies::setBranches(){
   llpTree->Branch("jetMatchedGenEta", jetMatchedGenEta,"jetMatchedGenEta[nJets]/F");
   llpTree->Branch("jetMatchedGenPhi", jetMatchedGenPhi,"jetMatchedGenPhi[nJets]/F");
   llpTree->Branch("jetMatchedGenMass", jetMatchedGenMass, "jetMatchedGenMass[nJets]/F");
-
+  llpTree->Branch("pfMetEta",&pfMetEta,"pfMetEta/F");
+  llpTree->Branch("pfMetE",&pfMetE,"pfMetE/F");
+  llpTree->Branch("pfMetPt",&pfMetPt,"pfMetPt/F");
+  llpTree->Branch("pfMetPhi",&pfMetPhi,"pfMetPhi/F");
 
 
 
@@ -326,8 +329,12 @@ void jet_timing_studies::enableMCBranches(){
   llpTree->Branch("genJetME", genJetME, "genJetME[nGenJets]/F");
   llpTree->Branch("genMetPtCalo", &genMetPtCalo, "genMetPtCalo/F");
   llpTree->Branch("genMetPhiCalo", &genMetPhiCalo, "genMetPhiCalo/F");
+  llpTree->Branch("genMetECalo", &genMetECalo, "genMetECalo/F");
+  llpTree->Branch("genMetEtaCalo", &genMetEtaCalo, "genMetEtaCalo/F");
   llpTree->Branch("genMetPtTrue", &genMetPtTrue, "genMetPtTrue/F");
   llpTree->Branch("genMetPhiTrue", &genMetPhiTrue, "genMetPhiTrue/F");
+  llpTree->Branch("genMetETrue", &genMetETrue, "genMetETrue/F");
+  llpTree->Branch("genMetEtaTrue", &genMetEtaTrue, "genMeTEtaTrue/F");
   llpTree->Branch("genVertexX", &genVertexX, "genVertexX/F");
   llpTree->Branch("genVertexY", &genVertexY, "genVertexY/F");
   llpTree->Branch("genVertexZ", &genVertexZ, "genVertexZ/F");
@@ -602,6 +609,10 @@ void jet_timing_studies::reset_jet_variables()
       jet_pv_rechits_T[i][j] = -666.;
     }
   }
+  pfMetPt = 0.0;
+  pfMetPhi = 0.0;  
+  pfMetEta = 0.0;
+  pfMetE = 0.0;
   return;
 };
 
@@ -665,8 +676,12 @@ void jet_timing_studies::reset_gen_jet_variable()
   }
   genMetPtCalo  = -666.;
   genMetPhiCalo = -666.;
+  genMetECalo  = -666.;
+  genMetEtaCalo = -666.;
   genMetPtTrue  = -666.;
   genMetPhiTrue = -666.;
+  genMetETrue  = -666.;
+  genMetEtaTrue = -666.;
   return;
 };
 void jet_timing_studies::reset_qcd_variables()
@@ -946,7 +961,11 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
     i_jet++;
 
   } //loop over jets
-
+  const reco::PFMET &Met = mets->front();
+  pfMetPt = Met.pt();
+  pfMetPhi = Met.phi();
+  pfMetE = Met.energy();
+  pfMetEta = Met.eta();
   //MC AND GEN LEVEL INFO
   fillMC();
   fillGenParticles();
@@ -1214,10 +1233,16 @@ bool jet_timing_studies::fillMC()
   const reco::GenMET &GenMetCalo = genMetsCalo->front();
   genMetPtCalo  = GenMetCalo.pt();
   genMetPhiCalo = GenMetCalo.phi();
+  genMetEtaCalo = GenMetCalo.eta();
+  genMetECalo = GenMetCalo.energy();
+
 
   const reco::GenMET &GenMetTrue = genMetsTrue->front();
   genMetPtTrue  = GenMetTrue.pt();
   genMetPhiTrue = GenMetTrue.phi();
+  genMetEtaTrue = GenMetTrue.eta();
+  genMetETrue = GenMetTrue.energy();
+
   bool foundGenVertex = false;
   for(size_t i=0; i<genParticles->size();i++)
   {
