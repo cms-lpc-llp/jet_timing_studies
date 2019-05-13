@@ -221,9 +221,9 @@ void jet_timing_studies::setBranches(){
     llpTree->Branch("jet_pv_rechit_T_Ecut0p5", jet_pv_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
     llpTree->Branch("jet_pv_rechit_T", jet_pv_rechit_T, "jet_rechit_T[nJets]/F");
 
-    llpTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[nJets][1000]/F");
-    llpTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][1000]/F");
-    llpTree->Branch("jet_pv_rechits_T", jet_pv_rechits_T, "jet_rechits_T[nJets][1000]/F");
+    llpTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[nJets][jet_n_rechits]/F");
+    llpTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][jet_n_rechits]/F");
+    llpTree->Branch("jet_pv_rechits_T", jet_pv_rechits_T, "jet_rechits_T[nJets][jet_n_rechits]/F");
   }
 
   llpTree->Branch("nPhotons", &fJetNPhotons,"nPhotons/I");
@@ -594,7 +594,6 @@ void jet_timing_studies::reset_jet_variables()
     jet_rechit_E_Ecut0p5[i] = 0.0; //energy with a 2 GeV cut
     jet_rechit_T_Ecut0p5[i] = 0.0;
 
-
     jet_pv_rechit_T[i] = 0.0;
     jet_pv_rechit_T_Ecut4[i] = 0.0;
     jet_pv_rechit_T_Ecut2[i] = 0.0;
@@ -610,7 +609,7 @@ void jet_timing_studies::reset_jet_variables()
     }
   }
   pfMetPt = 0.0;
-  pfMetPhi = 0.0;  
+  pfMetPhi = 0.0;
   pfMetEta = 0.0;
   pfMetE = 0.0;
   return;
@@ -873,10 +872,13 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
     int n_matched_rechits = 0;
     for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
     {
+      if (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird)) continue;
+      if (recHit->timeError() < 0 || recHit->timeError() > 100) continue;
       if ( recHit->checkFlag(0) )
       {
         const DetId recHitId = recHit->detid();
         const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
+
         if ( deltaR(jetEta[i_jet], jetPhi[i_jet], recHitPos.eta(), recHitPos.phi())  < 0.4)
         {
           jet_rechit_E[i_jet] += recHit->energy();
@@ -904,7 +906,6 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
             // std::cout << "rechit time, with pv"<<jet_rechit_T_Ecut1[i_jet]<< jet_pv_rechit_T_Ecut1[i_jet]<< std::endl;
             // std::cout << "rechits with pv, without" <<jet_pv_rechits_T[i_jet][n_matched_rechits] << jet_rechits_T[i_jet][n_matched_rechits] << std::endl;
             // std::cout << "rechit energy and time"<<recHit->energy()<< recHit->time()<< std::endl;
-
 
     	    }
           if (recHit->energy() > 1.5)
@@ -936,13 +937,15 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
             jet_pv_rechit_T_Ecut4[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
 
           }
-    	    n_matched_rechits++;
+          n_matched_rechits++;
+
         }
       }
     }
     //cout << "Last Nphoton: " << fJetNPhotons << "\n";
     //std::cout << "n: " << n_matched_rechits << std::endl;
     jet_n_rechits[i_jet] = n_matched_rechits;
+
     jet_rechit_T[i_jet] = jet_rechit_T[i_jet]/jet_rechit_E[i_jet];
     jet_rechit_T_Ecut4[i_jet] = jet_rechit_T_Ecut4[i_jet]/jet_rechit_E_Ecut4[i_jet];
     jet_rechit_T_Ecut3[i_jet] = jet_rechit_T_Ecut3[i_jet]/jet_rechit_E_Ecut3[i_jet];
@@ -1054,6 +1057,8 @@ bool jet_timing_studies::fill_fat_jet(const edm::EventSetup& iSetup)
     int n_matched_rechits = 0;
     for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
     {
+      if (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird)) continue;
+      if (recHit->timeError() < 0 || recHit->timeError() > 100) continue;
       if ( recHit->checkFlag(0) )
       {
         const DetId recHitId = recHit->detid();
