@@ -354,6 +354,15 @@ protected:
   float jetMatchedGenMass[OBJECTARRAYSIZE];
   float jetMatchedGenTime[OBJECTARRAYSIZE];
   int   jet_n_rechits[OBJECTARRAYSIZE];
+  int   jet_n_rechits_Ecut1[OBJECTARRAYSIZE];
+  int   jet_n_rechits_Ecut0p5[OBJECTARRAYSIZE];
+
+  int event_n_rechits;
+  bool good_jet[OBJECTARRAYSIZE];
+  bool good_jet0p5[OBJECTARRAYSIZE];
+
+  float jet_rechit_T_rms_Ecut1[OBJECTARRAYSIZE];
+  float jet_rechit_T_rms_Ecut0p5[OBJECTARRAYSIZE];
   float jet_rechit_E[OBJECTARRAYSIZE];
   float jet_rechit_T[OBJECTARRAYSIZE];
   float jet_pv_rechit_T[OBJECTARRAYSIZE];
@@ -370,16 +379,17 @@ protected:
   float jet_rechit_T_Ecut1[OBJECTARRAYSIZE];
   float jet_rechit_E_Ecut0p5[OBJECTARRAYSIZE];
   float jet_rechit_T_Ecut0p5[OBJECTARRAYSIZE];
-  float jet_rechits_E[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
-  float jet_rechits_T[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
-
+  float jet_rechits_E[RECHITARRAYSIZE];
+  float jet_rechits_T[RECHITARRAYSIZE];
+  float jet_rechits_eta[RECHITARRAYSIZE];
+  float jet_rechits_phi[RECHITARRAYSIZE];
   float jet_pv_rechit_T_Ecut4[OBJECTARRAYSIZE];
   float jet_pv_rechit_T_Ecut3[OBJECTARRAYSIZE];
   float jet_pv_rechit_T_Ecut2[OBJECTARRAYSIZE];
   float jet_pv_rechit_T_Ecut1p5[OBJECTARRAYSIZE];
   float jet_pv_rechit_T_Ecut1[OBJECTARRAYSIZE];
   float jet_pv_rechit_T_Ecut0p5[OBJECTARRAYSIZE];
-  float jet_pv_rechits_T[OBJECTARRAYSIZE][OBJECTARRAYSIZE];
+  float jet_pv_rechits_T[RECHITARRAYSIZE];
 
   //AK8 Jets
   int n_fat_Jets;

@@ -195,8 +195,18 @@ void jet_timing_studies::setBranches(){
 
   if( enableRecHitInfo_ )
   {
+    llpTree->Branch("event_n_rechits", &event_n_rechits, "event_n_rechits/I");
 
     llpTree->Branch("jet_n_rechits", jet_n_rechits, "jet_n_rechits[nJets]/I");
+    llpTree->Branch("good_jet", good_jet, "good_jet[nJets]/O");
+    llpTree->Branch("good_jet0p5", good_jet0p5, "good_jet0p5[nJets]/O");
+
+    llpTree->Branch("jet_n_rechits_Ecut1", jet_n_rechits_Ecut1, "jet_n_rechits_Ecut1[nJets]/I");
+    llpTree->Branch("jet_n_rechits_Ecut0p5", jet_n_rechits_Ecut0p5, "jet_n_rechits_Ecut0p5[nJets]/I");
+
+    llpTree->Branch("jet_rechit_T_rms_Ecut1", jet_rechit_T_rms_Ecut1, "jet_rechit_T_rms_Ecut1[nJets]/F");
+    llpTree->Branch("jet_rechit_T_rms_Ecut0p5", jet_rechit_T_rms_Ecut0p5, "jet_rechit_T_rms_Ecut0p5[nJets]/F");
+
     llpTree->Branch("jet_rechit_E_Ecut3", jet_rechit_E_Ecut3, "jet_rechit_E_Ecut3[nJets]/F");
     llpTree->Branch("jet_rechit_T_Ecut3", jet_rechit_T_Ecut3, "jet_rechit_T_Ecut3[nJets]/F");
     llpTree->Branch("jet_rechit_E_Ecut4", jet_rechit_E_Ecut4, "jet_rechit_E_Ecut4[nJets]/F");
@@ -220,10 +230,14 @@ void jet_timing_studies::setBranches(){
     llpTree->Branch("jet_pv_rechit_T_Ecut1", jet_pv_rechit_T_Ecut1, "jet_rechit_T_Ecut1[nJets]/F");
     llpTree->Branch("jet_pv_rechit_T_Ecut0p5", jet_pv_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
     llpTree->Branch("jet_pv_rechit_T", jet_pv_rechit_T, "jet_rechit_T[nJets]/F");
+    llpTree->Branch("jet_rechits_phi", jet_rechits_phi, "jet_rechits_phi[event_n_rechits]/F");
+    llpTree->Branch("jet_rechits_eta", jet_rechits_eta, "jet_rechits_eta[event_n_rechits]/F");
+    llpTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[event_n_rechits]/F");
+    llpTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[event_n_rechits]/F");
 
-    llpTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[nJets][jet_n_rechits]/F");
-    llpTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][jet_n_rechits]/F");
-    llpTree->Branch("jet_pv_rechits_T", jet_pv_rechits_T, "jet_rechits_T[nJets][jet_n_rechits]/F");
+    // llpTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[nJets][500]/F");
+    // llpTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][500]/F");
+    llpTree->Branch("jet_pv_rechits_T", jet_pv_rechits_T, "jet_pv_rechits_T[event_n_rechits]/F");
   }
 
   llpTree->Branch("nPhotons", &fJetNPhotons,"nPhotons/I");
@@ -244,8 +258,55 @@ void jet_timing_studies::setBranches(){
   enableFatJetBranches();
   enableMCBranches();
   enableGenParticleBranches();
+  // enableElectronBranches();
   if (enableTriggerInfo_) enableTriggerBranches();
   if (isQCD_)enableQCDBranches();
+};
+void llp_ntupler::enableElectronBranches()
+{
+  llpTree->Branch("nElectrons", &nElectrons,"nElectrons/I");
+  llpTree->Branch("eleE", eleE,"eleE[nElectrons]/F");
+  llpTree->Branch("elePt", elePt,"elePt[nElectrons]/F");
+  llpTree->Branch("eleEta", eleEta,"eleEta[nElectrons]/F");
+  llpTree->Branch("elePhi", elePhi,"elePhi[nElectrons]/F");
+  llpTree->Branch("eleCharge", eleCharge, "eleCharge[nElectrons]/F");
+  //llpTree->Branch("EleE_SC", eleE_SC,"eleE_SC[nElectrons]/F");
+  llpTree->Branch("eleEta_SC", eleEta_SC,"eleEta_SC[nElectrons]/F");
+  //llpTree->Branch("elePhi_SC", elePhi_SC,"elePhi_SC[nElectrons]/F");
+  llpTree->Branch("eleSigmaIetaIeta", eleSigmaIetaIeta, "eleSigmaIetaIeta[nElectrons]/F");
+  llpTree->Branch("eleFull5x5SigmaIetaIeta", eleFull5x5SigmaIetaIeta, "eleFull5x5SigmaIetaIeta[nElectrons]/F");
+  llpTree->Branch("eleR9", eleR9, "eleR9[nElectrons]/F");
+  llpTree->Branch("ele_dEta", ele_dEta, "ele_dEta[nElectrons]/F");
+  llpTree->Branch("ele_dPhi", ele_dPhi, "ele_dPhi[nElectrons]/F");
+  llpTree->Branch("ele_HoverE", ele_HoverE, "ele_HoverE[nElectrons]/F");
+  llpTree->Branch("ele_d0", ele_d0, "ele_d0[nElectrons]/F");
+  llpTree->Branch("ele_dZ", ele_dZ, "ele_dZ[nElectrons]/F");
+  llpTree->Branch("ele_ip3d", ele_ip3d, "ele_ip3d[nElectrons]/F");
+  llpTree->Branch("ele_ip3dSignificance", ele_ip3dSignificance, "ele_ip3dSignificance[nElectrons]/F");
+  llpTree->Branch("ele_pileupIso", ele_pileupIso, "ele_pileupIso[nElectrons]/F");
+  llpTree->Branch("ele_chargedIso", ele_chargedIso, "ele_chargedIso[nElectrons]/F");
+  llpTree->Branch("ele_photonIso", ele_photonIso, "ele_photonIso[nElectrons]/F");
+  llpTree->Branch("ele_neutralHadIso", ele_neutralHadIso, "ele_neutralHadIso[nElectrons]/F");
+  llpTree->Branch("ele_MissHits", ele_MissHits, "ele_MissHits[nElectrons]/I");
+  llpTree->Branch("ele_PassConvVeto", ele_PassConvVeto, "ele_PassConvVeto[nElectrons]/O");
+  llpTree->Branch("ele_OneOverEminusOneOverP", ele_OneOverEminusOneOverP, "ele_OneOverEminusOneOverP[nElectrons]/F");
+  llpTree->Branch("ele_IDMVAGeneralPurpose", ele_IDMVAGeneralPurpose, "ele_IDMVAGeneralPurpose[nElectrons]/F");
+  llpTree->Branch("ele_IDMVACategoryGeneralPurpose", ele_IDMVACategoryGeneralPurpose, "ele_IDMVACategoryGeneralPurpose[nElectrons]/I");
+  llpTree->Branch("ele_IDMVAHZZ", ele_IDMVAHZZ, "ele_IDMVAHZZ[nElectrons]/F");
+  llpTree->Branch("ele_IDMVACategoryHZZ", ele_IDMVACategoryHZZ, "ele_IDMVACategoryHZZ[nElectrons]/I");
+  llpTree->Branch("ele_RegressionE", ele_RegressionE, "ele_RegressionE[nElectrons]/F");
+  llpTree->Branch("ele_CombineP4", ele_CombineP4, "ele_CombineP4[nElectrons]/F");
+  llpTree->Branch("ele_ptrel", ele_ptrel, "ele_ptrel[nElectrons]/F");
+  llpTree->Branch("ele_chargedMiniIso", ele_chargedMiniIso, "ele_chargedMiniIso[nElectrons]/F");
+  llpTree->Branch("ele_photonAndNeutralHadronMiniIso", ele_photonAndNeutralHadronMiniIso, "ele_photonAndNeutralHadronMiniIso[nElectrons]/F");
+  llpTree->Branch("ele_chargedPileupMiniIso", ele_chargedPileupMiniIso, "ele_chargedPileupMiniIso[nElectrons]/F");
+  llpTree->Branch("ele_activityMiniIsoAnnulus", ele_activityMiniIsoAnnulus, "ele_activityMiniIsoAnnulus[nElectrons]/F");
+  llpTree->Branch("ele_passSingleEleTagFilter", ele_passSingleEleTagFilter, "ele_passSingleEleTagFilter[nElectrons]/O");
+  llpTree->Branch("ele_passTPOneTagFilter", ele_passTPOneTagFilter, "ele_passTPOneTagFilter[nElectrons]/O");
+  llpTree->Branch("ele_passTPTwoTagFilter", ele_passTPTwoTagFilter, "ele_passTPTwoTagFilter[nElectrons]/O");
+  llpTree->Branch("ele_passTPOneProbeFilter", ele_passTPOneProbeFilter, "ele_passTPOneProbeFilter[nElectrons]/O");
+  llpTree->Branch("ele_passTPTwoProbeFilter", ele_passTPTwoProbeFilter, "ele_passTPTwoProbeFilter[nElectrons]/O");
+  llpTree->Branch("ele_passHLTFilter", &ele_passHLTFilter, Form("ele_passHLTFilter[nElectrons][%d]/O",MAX_ElectronHLTFilters));
 };
 
 void jet_timing_studies::enableFatJetBranches()
@@ -578,8 +639,15 @@ void jet_timing_studies::reset_jet_variables()
     jetMatchedGenMass[i] = 0.0;
     jetMatchedGenTime[i] = 0.0;
     jet_n_rechits[i] = 0;
+    event_n_rechits = 0;
+    jet_n_rechits_Ecut1[i] = 0;
+    jet_n_rechits_Ecut0p5[i] = 0;
+    good_jet[i] = true;
+    good_jet0p5[i] = true;
     jet_rechit_E[i] = 0.0;
     jet_rechit_T[i] = 0.0;
+    jet_rechit_T_rms_Ecut1[i] = 0.0;
+    jet_rechit_T_rms_Ecut0p5[i] = 0.0;
     jet_rechit_E_Ecut3[i] = 0.0; //energy with a 2 GeV cut
     jet_rechit_T_Ecut3[i] = 0.0;
 
@@ -600,13 +668,16 @@ void jet_timing_studies::reset_jet_variables()
     jet_pv_rechit_T_Ecut1p5[i] = 0.0;
     jet_pv_rechit_T_Ecut1[i] = 0.0;
     jet_pv_rechit_T_Ecut0p5[i] = 0.0;
-
-    for(int j =0; j < OBJECTARRAYSIZE;j++)
-    {
-      jet_rechits_E[i][j] = -666.;
-      jet_rechits_T[i][j] = -666.;
-      jet_pv_rechits_T[i][j] = -666.;
-    }
+  }
+  for(int i =0; i < RECHITARRAYSIZE;i++)
+  {
+    // jet_rechits_E[i][j] = -666.;
+    // jet_rechits_T[i][j] = -666.;
+    jet_rechits_E[i] = -666.;
+    jet_rechits_T[i] = -666.;
+    jet_rechits_phi[i] = -666.;
+    jet_rechits_eta[i] = -666.;
+    jet_pv_rechits_T[i] = -666.;
   }
   pfMetPt = 0.0;
   pfMetPhi = 0.0;
@@ -777,11 +848,15 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
   }
 
   int i_jet = 0;
+  int n_rechits = 0;
   for (const reco::PFJet &j : *jets)
   {
     //resetBranches();
     if (j.pt() < 20) continue;
     if (fabs(j.eta()) > 2.4) continue;
+
+
+
     //*************************************
     //Fill Jet-Level Info
     //*************************************
@@ -869,83 +944,151 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
     const CaloSubdetectorGeometry *barrelGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
     //const CaloSubdetectorGeometry *endcapGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalEndcap);
     double ecal_radius = 129.0;
+    double hcal_radius = 179.0;
     int n_matched_rechits = 0;
+    int n_matched_rechits_Ecut0p5 = 0;
+    int n_matched_rechits_Ecut1 = 0;
+
     for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
     {
-      if (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird)) continue;
-      if (recHit->timeError() < 0 || recHit->timeError() > 100) continue;
-      if ( recHit->checkFlag(0) )
+      // if (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird)) continue;
+      // if (recHit->timeError() < 0 || recHit->timeError() > 100) continue;
+
+      const DetId recHitId = recHit->detid();
+      const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
+
+      if ( deltaR(jetEta[i_jet], jetPhi[i_jet], recHitPos.eta(), recHitPos.phi())  < 0.4)
       {
-        const DetId recHitId = recHit->detid();
-        const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
+        // if (good_jet[i_jet])
+        // {
+        //   std::cout << "good jet: " << good_jet[i_jet] << ","<<i_jet<<","<<nJets<<std::endl;
+        //   std::cout<< "rechit energy" <<recHit->energy() <<std::endl;
+        //   std::cout<< "time error flag" << (recHit->timeError() < 0 || recHit->timeError() > 100 )<<std::endl;
+        //   std::cout<< "flag" << (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird))<<std::endl;
+        //   std::cout<< "flag"<< (!recHit->checkFlag(0)) <<std::endl;
+        // }
 
-        if ( deltaR(jetEta[i_jet], jetPhi[i_jet], recHitPos.eta(), recHitPos.phi())  < 0.4)
+        if ( !recHit->checkFlag(0)){
+          good_jet[i_jet] = false;
+          if (recHit->energy()>0.5){
+            good_jet0p5[i_jet] = false;
+          }
+          continue;
+        }
+        if (recHit->timeError() < 0 || recHit->timeError() > 100)
         {
-          jet_rechit_E[i_jet] += recHit->energy();
-          jet_rechit_T[i_jet] += recHit->time()*recHit->energy();
-          jet_rechits_E[i_jet][n_matched_rechits] = recHit->energy();
-    	    jet_rechits_T[i_jet][n_matched_rechits] = recHit->time();
-    	    double rechit_x = ecal_radius * cos(recHitPos.phi());
-    	    double rechit_y = ecal_radius * sin(recHitPos.phi());
-    	    double rechit_z = ecal_radius * sinh(recHitPos.eta());
-    	    double photon_pv_travel_time = (1./30) * sqrt(pow(pvX-rechit_x,2)+pow(pvY-rechit_y,2)+pow(pvZ-rechit_z,2));
-          jet_pv_rechits_T[i_jet][n_matched_rechits] = recHit->time()+(1./30)*ecal_radius*cosh(recHitPos.eta()) - photon_pv_travel_time;
-    	    jet_pv_rechit_T[i_jet] += recHit->energy()*jet_pv_rechits_T[i_jet][n_matched_rechits];
-          // std::cout << jet_pv_rechits_T[i_jet][n_matched_rechits] << jet_rechits_T[i_jet][n_matched_rechits] << std::endl;
-          if (recHit->energy() > 0.5)
-    	    {
-        		jet_rechit_E_Ecut0p5[i_jet] += recHit->energy();
-        		jet_rechit_T_Ecut0p5[i_jet] += recHit->time()*recHit->energy();
-            jet_pv_rechit_T_Ecut0p5[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-    	    }
-          if (recHit->energy() > 1.0)
-    	    {
-    		    jet_rechit_E_Ecut1[i_jet] += recHit->energy();
-    		    jet_rechit_T_Ecut1[i_jet] += recHit->time()*recHit->energy();
-            jet_pv_rechit_T_Ecut1[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-            // std::cout << "rechit time, with pv"<<jet_rechit_T_Ecut1[i_jet]<< jet_pv_rechit_T_Ecut1[i_jet]<< std::endl;
-            // std::cout << "rechits with pv, without" <<jet_pv_rechits_T[i_jet][n_matched_rechits] << jet_rechits_T[i_jet][n_matched_rechits] << std::endl;
-            // std::cout << "rechit energy and time"<<recHit->energy()<< recHit->time()<< std::endl;
-
-    	    }
-          if (recHit->energy() > 1.5)
-    	    {
-    		    jet_rechit_E_Ecut1p5[i_jet] += recHit->energy();
-    		    jet_rechit_T_Ecut1p5[i_jet] += recHit->time()*recHit->energy();
-            jet_pv_rechit_T_Ecut1p5[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-
-    	    }
-          if (recHit->energy() > 2.0)
-    	    {
-    		    jet_rechit_E_Ecut2[i_jet] += recHit->energy();
-    		    jet_rechit_T_Ecut2[i_jet] += recHit->time()*recHit->energy();
-            jet_pv_rechit_T_Ecut2[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-
-    	    }
-    	    if (recHit->energy() > 3.0)
-          {
-            jet_rechit_E_Ecut3[i_jet] += recHit->energy();
-            jet_rechit_T_Ecut3[i_jet] += recHit->time()*recHit->energy();
-            jet_pv_rechit_T_Ecut3[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-
+          good_jet[i_jet] = false;
+          if (recHit->energy()>0.5){
+            good_jet0p5[i_jet] = false;
           }
-
-    	    if (recHit->energy() > 4.0)
-          {
-            jet_rechit_E_Ecut4[i_jet] += recHit->energy();
-            jet_rechit_T_Ecut4[i_jet] += recHit->time()*recHit->energy();
-            jet_pv_rechit_T_Ecut4[i_jet] += jet_pv_rechits_T[i_jet][n_matched_rechits] *recHit->energy();
-
+          continue;
+        }
+        if (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird))
+        {
+          good_jet[i_jet] = false;
+          if (recHit->energy()>0.5){
+            good_jet0p5[i_jet] = false;
           }
-          n_matched_rechits++;
+          continue;
+        }
+
+        jet_rechit_E[i_jet] += recHit->energy();
+        jet_rechit_T[i_jet] += recHit->time()*recHit->energy();
+        // if (i_jet != 0 && (recHit->energy() >= 1.0 ||recHit->energy() == 0.0  )){
+        //   std::cout << "before: "<< i_jet <<", "<<n_matched_rechits<<", "<< n_matched_rechits_Ecut1<<", "<<jet_rechits_E[i_jet][n_matched_rechits] << ", " <<recHit->energy()<< std::endl;
+        // }
+        // jet_rechits_E[i_jet][n_matched_rechits] = recHit->energy();
+  	    // jet_rechits_T[i_jet][n_matched_rechits] = recHit->time();
+        jet_rechits_phi[n_rechits] = recHitPos.phi();
+        jet_rechits_eta[n_rechits] = recHitPos.eta();
+        jet_rechits_E[n_rechits]= recHit->energy();
+        jet_rechits_T[n_rechits] = recHit->time();
+        // if (i_jet != 0 && (recHit->energy() >= 1.0||recHit->energy() == 0.0)){
+        //   std::cout << "after: "<< i_jet <<", "<< n_matched_rechits<<", "<<n_matched_rechits_Ecut1<<", "<<jet_rechits_E[i_jet][n_matched_rechits] << ", " <<recHit->energy()<< std::endl;
+        // }
+
+
+  	    double rechit_x = ecal_radius * cos(recHitPos.phi());
+  	    double rechit_y = ecal_radius * sin(recHitPos.phi());
+  	    double rechit_z = ecal_radius * sinh(recHitPos.eta());
+  	    double photon_pv_travel_time = (1./30) * sqrt(pow(pvX-rechit_x,2)+pow(pvY-rechit_y,2)+pow(pvZ-rechit_z,2));
+        jet_pv_rechits_T[n_rechits] = recHit->time()+(1./30)*ecal_radius*cosh(recHitPos.eta()) - photon_pv_travel_time;
+  	    jet_pv_rechit_T[i_jet] += recHit->energy()*jet_pv_rechits_T[n_rechits];
+        if (recHit->energy() > 0.5)
+  	    {
+      		jet_rechit_E_Ecut0p5[i_jet] += recHit->energy();
+      		jet_rechit_T_Ecut0p5[i_jet] += recHit->time()*recHit->energy();
+          jet_pv_rechit_T_Ecut0p5[i_jet] += jet_pv_rechits_T[n_rechits] *recHit->energy();
+          jet_rechit_T_rms_Ecut0p5[i_jet] += recHit->time()*recHit->time();
+          n_matched_rechits_Ecut0p5++;
+  	    }
+        if (recHit->energy() > 1.0)
+  	    {
+  		    jet_rechit_E_Ecut1[i_jet] += recHit->energy();
+  		    jet_rechit_T_Ecut1[i_jet] += recHit->time()*recHit->energy();
+          jet_pv_rechit_T_Ecut1[i_jet] += jet_pv_rechits_T[n_rechits] *recHit->energy();
+          jet_rechit_T_rms_Ecut1[i_jet] += recHit->time()*recHit->time();
+          // std::cout << "rechit time, with pv"<<jet_rechit_T_Ecut1[i_jet]<< jet_pv_rechit_T_Ecut1[i_jet]<< std::endl;
+          // std::cout << "rechits with pv, without" <<jet_pv_rechits_T[i_jet][n_matched_rechits] << jet_rechits_T[i_jet][n_matched_rechits] << std::endl;
+          // std::cout << "rechit energy and time"<<recHit->energy()<< ", "<<recHit->time()<< std::endl;
+          n_matched_rechits_Ecut1++;
+  	    }
+        if (recHit->energy() > 1.5)
+  	    {
+  		    jet_rechit_E_Ecut1p5[i_jet] += recHit->energy();
+  		    jet_rechit_T_Ecut1p5[i_jet] += recHit->time()*recHit->energy();
+          jet_pv_rechit_T_Ecut1p5[i_jet] += jet_pv_rechits_T[n_rechits] *recHit->energy();
+
+  	    }
+        if (recHit->energy() > 2.0)
+  	    {
+  		    jet_rechit_E_Ecut2[i_jet] += recHit->energy();
+  		    jet_rechit_T_Ecut2[i_jet] += recHit->time()*recHit->energy();
+          jet_pv_rechit_T_Ecut2[i_jet] += jet_pv_rechits_T[n_rechits] *recHit->energy();
+
+  	    }
+  	    if (recHit->energy() > 3.0)
+        {
+          jet_rechit_E_Ecut3[i_jet] += recHit->energy();
+          jet_rechit_T_Ecut3[i_jet] += recHit->time()*recHit->energy();
+          jet_pv_rechit_T_Ecut3[i_jet] += jet_pv_rechits_T[n_rechits] *recHit->energy();
 
         }
+
+  	    if (recHit->energy() > 4.0)
+        {
+          jet_rechit_E_Ecut4[i_jet] += recHit->energy();
+          jet_rechit_T_Ecut4[i_jet] += recHit->time()*recHit->energy();
+          jet_pv_rechit_T_Ecut4[i_jet] += jet_pv_rechits_T[n_rechits] *recHit->energy();
+
+        }
+        n_matched_rechits++;
+        n_rechits++;
       }
+
     }
     //cout << "Last Nphoton: " << fJetNPhotons << "\n";
     //std::cout << "n: " << n_matched_rechits << std::endl;
     jet_n_rechits[i_jet] = n_matched_rechits;
+    jet_n_rechits_Ecut1[i_jet] = n_matched_rechits_Ecut1;
+    jet_n_rechits_Ecut0p5[i_jet] = n_matched_rechits_Ecut0p5;
 
+    if (n_matched_rechits_Ecut1 > 0){
+      jet_rechit_T_rms_Ecut1[i_jet] = sqrt(jet_rechit_T_rms_Ecut1[i_jet])/n_matched_rechits_Ecut1;
+
+    }
+    else{
+      jet_rechit_T_rms_Ecut1[i_jet] = -666.0;
+
+    }
+    if (n_matched_rechits_Ecut0p5 > 0){
+      jet_rechit_T_rms_Ecut0p5[i_jet] = sqrt(jet_rechit_T_rms_Ecut0p5[i_jet])/n_matched_rechits_Ecut0p5;
+
+    }
+    else{
+      jet_rechit_T_rms_Ecut0p5[i_jet] = -666.0;
+
+    }
     jet_rechit_T[i_jet] = jet_rechit_T[i_jet]/jet_rechit_E[i_jet];
     jet_rechit_T_Ecut4[i_jet] = jet_rechit_T_Ecut4[i_jet]/jet_rechit_E_Ecut4[i_jet];
     jet_rechit_T_Ecut3[i_jet] = jet_rechit_T_Ecut3[i_jet]/jet_rechit_E_Ecut3[i_jet];
@@ -963,7 +1106,10 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
     nJets++;
     i_jet++;
 
+
   } //loop over jets
+  event_n_rechits = n_rechits;
+
   const reco::PFMET &Met = mets->front();
   pfMetPt = Met.pt();
   pfMetPhi = Met.phi();
@@ -1671,27 +1817,33 @@ bool jet_timing_studies::fillGenParticles(){
     		        match_jet_index_hcal = i_jet;
     	        }
     	      }//end matching to jets using HCAL radius
-    	      if ( min_delta_r < 0.3 )
-    	      {
-    	        gLLP_daughter_match_jet_index[id] = match_jet_index;
-    	        gLLP_min_delta_r_match_jet[id] = min_delta_r;
-    	        gLLP_min_delta_r_nocorr_match_jet[id] = min_delta_r_nocorr;
-    	      }
-            if ( min_delta_r < 0.45 )
+    	      if( fabs(z_ecal) < 271.6561246934 && radius <= ecal_radius)
             {
-              gLLP_daughter_match_jet_index_loose[id] = match_jet_index;
-              gLLP_min_delta_r_match_jet_loose[id] = min_delta_r;
+              if ( min_delta_r < 0.3 )
+      	      {
+      	        gLLP_daughter_match_jet_index[id] = match_jet_index;
+      	        gLLP_min_delta_r_match_jet[id] = min_delta_r;
+      	        gLLP_min_delta_r_nocorr_match_jet[id] = min_delta_r_nocorr;
+      	      }
+              if ( min_delta_r < 0.45 )
+              {
+                gLLP_daughter_match_jet_index_loose[id] = match_jet_index;
+                gLLP_min_delta_r_match_jet_loose[id] = min_delta_r;
+              }
             }
-            if ( min_delta_r_hcal < 0.3 )
-    	      {
-    	        gLLP_daughter_match_jet_index_hcal[id] = match_jet_index_hcal;
-    	        gLLP_min_delta_r_match_jet_hcal[id] = min_delta_r_hcal;
-    	      }
-            if ( min_delta_r_hcal < 0.45 )
-    	      {
-    	        gLLP_daughter_match_jet_index_hcal_loose[id] = match_jet_index_hcal;
-    	        gLLP_min_delta_r_match_jet_hcal_loose[id] = min_delta_r_hcal;
-    	      }
+            if( fabs(z_hcal) < 388.0 && radius <= hcal_radius)
+            {
+              if ( min_delta_r_hcal < 0.3 )
+      	      {
+      	        gLLP_daughter_match_jet_index_hcal[id] = match_jet_index_hcal;
+      	        gLLP_min_delta_r_match_jet_hcal[id] = min_delta_r_hcal;
+      	      }
+              if ( min_delta_r_hcal < 0.45 )
+      	      {
+      	        gLLP_daughter_match_jet_index_hcal_loose[id] = match_jet_index_hcal;
+      	        gLLP_min_delta_r_match_jet_hcal_loose[id] = min_delta_r_hcal;
+      	      }
+            }
     	      if ( genJet_min_delta_r < 0.3 )
     	      {
     	        gLLP_daughter_match_genJet_index[id] = match_genJet_index;
@@ -1814,27 +1966,39 @@ bool jet_timing_studies::fillGenParticles(){
           		  match_jet_index_hcal = i_jet;
           		}
     	      }//end matching to jets hcal
-            if ( min_delta_r < 0.3 )
-    	      {
-    	        gLLP_daughter_match_jet_index[id+2] = match_jet_index;
-    	        gLLP_min_delta_r_match_jet[id+2] = min_delta_r;
-    	        gLLP_min_delta_r_nocorr_match_jet[id] = min_delta_r_nocorr;
-    	      }
-            if ( min_delta_r < 0.45 )
+            if( fabs(z_ecal) < 271.6561246934 && radius <= ecal_radius)
             {
-              gLLP_daughter_match_jet_index_loose[id+2] = match_jet_index;
-              gLLP_min_delta_r_match_jet_loose[id+2] = min_delta_r;
+              if ( min_delta_r < 0.3 )
+              {
+                gLLP_daughter_match_jet_index[id+2] = match_jet_index;
+                gLLP_min_delta_r_match_jet[id+2] = min_delta_r;
+                gLLP_min_delta_r_nocorr_match_jet[id] = min_delta_r_nocorr;
+              }
+              if ( min_delta_r < 0.45 )
+              {
+                gLLP_daughter_match_jet_index_loose[id+2] = match_jet_index;
+                gLLP_min_delta_r_match_jet_loose[id+2] = min_delta_r;
+              }
+
+
             }
-            if ( min_delta_r_hcal < 0.3 )
-    	      {
-    	        gLLP_daughter_match_jet_index_hcal[id+2] = match_jet_index_hcal;
-    	        gLLP_min_delta_r_match_jet_hcal[id+2] = min_delta_r_hcal;
-    	      }
-            if ( min_delta_r_hcal < 0.3 )
-    	      {
-    	        gLLP_daughter_match_jet_index_hcal_loose[id+2] = match_jet_index_hcal;
-    	        gLLP_min_delta_r_match_jet_hcal_loose[id+2] = min_delta_r_hcal;
-    	      }
+            if( fabs(z_hcal) < 388.0 && radius <= hcal_radius)
+            {
+              if ( min_delta_r_hcal < 0.3 )
+              {
+                gLLP_daughter_match_jet_index_hcal[id+2] = match_jet_index_hcal;
+                gLLP_min_delta_r_match_jet_hcal[id+2] = min_delta_r_hcal;
+              }
+              if ( min_delta_r_hcal < 0.3 )
+              {
+                gLLP_daughter_match_jet_index_hcal_loose[id+2] = match_jet_index_hcal;
+                gLLP_min_delta_r_match_jet_hcal_loose[id+2] = min_delta_r_hcal;
+              }
+
+
+            }
+
+
     	      if ( genJet_min_delta_r < 0.3 )
     	      {
     	        gLLP_daughter_match_genJet_index[id+2] = match_genJet_index;
