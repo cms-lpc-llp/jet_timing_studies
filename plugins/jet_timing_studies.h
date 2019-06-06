@@ -158,7 +158,7 @@ protected:
 
   // Control Switches
   bool isData_;
-  bool isFourJet_;
+  int model_;
   bool useGen_;
   bool isFastsim_;
   bool isQCD_;
@@ -477,7 +477,7 @@ protected:
 
   //event info
   bool isData;
-  bool isFourJet;
+  int model;
   bool isQCD;
   uint runNum;
   uint lumiNum;
@@ -555,6 +555,11 @@ float gLLP_decay_vertex_x[LLP_ARRAY_SIZE];
 float gLLP_decay_vertex_y[LLP_ARRAY_SIZE];
 float gLLP_decay_vertex_z[LLP_ARRAY_SIZE];
 float gLLP_beta[LLP_ARRAY_SIZE];
+float gLLP_pt[LLP_ARRAY_SIZE];
+float gLLP_e[LLP_ARRAY_SIZE];
+float gLLP_eta[LLP_ARRAY_SIZE];
+float gLLP_phi[LLP_ARRAY_SIZE];
+
 float gLLP_travel_time[LLP_ARRAY_SIZE];
 
 
