@@ -59,12 +59,14 @@ using namespace std;
 
 #include "DataFormats/METReco/interface/GenMETCollection.h"
 #include "DataFormats/METReco/interface/GenMET.h"
+#include "DataFormats/JetReco/interface/CaloJetCollection.h"
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
 #include "DataFormats/METReco/interface/PFMET.h"
 #include "DataFormats/ParticleFlowReco/interface/PFCluster.h"
 #include "DataFormats/ParticleFlowReco/interface/PFClusterFwd.h"
 #include "DataFormats/METReco/interface/PFMETCollection.h"
 #include "DataFormats/TauReco/interface/PFTau.h"
+#include "DataFormats/JetReco/interface/CaloJet.h"
 #include "DataFormats/JetReco/interface/PFJet.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/JetReco/interface/BasicJetCollection.h"
@@ -121,7 +123,9 @@ public:
   //enable desired output variables
   virtual void setBranches();
   void reset_event_variables();
+  void resetPVTracksBranches();
   void reset_photon_variable();
+  void resetCaloJetBranches();
   void reset_jet_variables();
   void reset_fat_jet_variables();
   void reset_gen_llp_variable();
@@ -129,19 +133,24 @@ public:
   void reset_qcd_variables();
 
   //------ HELPER FUNCTIONS ------//
+  bool passCaloJetID( const reco::CaloJet *jetCalo, int cutLevel);
   bool passJetID( const reco::PFJet *jet, int cutLevel);
   double deltaPhi(double phi1, double phi2);
   double deltaR(double eta1, double phi1, double eta2, double phi2);
+
+  void enablePVTracksBranches();
   void enableFatJetBranches();
   void enableMCBranches();
   void enableGenParticleBranches();
+  void enableCaloJetBranches();
   void enableTriggerBranches();
   void enableQCDBranches();
 
-
+  bool fillPVTracks();
   bool fill_fat_jet(const edm::EventSetup& iSetup);
   bool fillMC();
   bool fillGenParticles();
+  bool fillCaloJets(const edm::EventSetup& iSetup);
   bool fillTrigger(const edm::Event& iEvent);
   const reco::Candidate* findFirstMotherWithDifferentID(const reco::Candidate *particle);
   const reco::Candidate* findOriginalMotherWithSameID(const reco::Candidate *particle);
@@ -193,6 +202,7 @@ protected:
   edm::EDGetTokenT<reco::GsfElectronCollection> electronsToken_;
   edm::EDGetTokenT<reco::PFTauCollection> tausToken_;
   edm::EDGetTokenT<reco::PhotonCollection> photonsToken_;
+  edm::EDGetTokenT<reco::CaloJetCollection> jetsCaloToken_;
   edm::EDGetTokenT<reco::PFJetCollection> jetsToken_;
   edm::EDGetTokenT<reco::PFJetCollection> jetsPuppiToken_;
   edm::EDGetTokenT<reco::PFJetCollection> jetsAK8Token_;
@@ -261,6 +271,7 @@ protected:
   edm::Handle<reco::GsfElectronCollection> electrons;
   edm::Handle<reco::PhotonCollection> photons;
   edm::Handle<reco::PFTauCollection> taus;
+  edm::Handle<reco::CaloJetCollection> jetsCalo;
   edm::Handle<reco::PFJetCollection> jets;
   edm::Handle<reco::PFJetCollection> jetsPuppi;
   edm::Handle<reco::PFJetCollection> jetsAK8;
@@ -312,6 +323,30 @@ protected:
 
   //------ Variables for tree ------//
 
+  //Calo Jets
+  int nCaloJets;
+  float calojetE[OBJECTARRAYSIZE];
+  float calojetPt[OBJECTARRAYSIZE];
+  float calojetEta[OBJECTARRAYSIZE];
+  float calojetPhi[OBJECTARRAYSIZE];
+  // float calojetCSV[OBJECTARRAYSIZE];
+  // float calojetCISV[OBJECTARRAYSIZE];
+  // float calojetProbb[OBJECTARRAYSIZE];
+  // float calojetProbc[OBJECTARRAYSIZE];
+  // float calojetProbudsg[OBJECTARRAYSIZE];
+  // float calojetProbbb[OBJECTARRAYSIZE];
+  float calojetMass[OBJECTARRAYSIZE];
+  float calojetJetArea[OBJECTARRAYSIZE];
+  float calojetPileupE[OBJECTARRAYSIZE];
+  float calojetPileupId[OBJECTARRAYSIZE];
+  int   calojetPileupIdFlag[OBJECTARRAYSIZE];
+  bool  calojetPassIDLoose[OBJECTARRAYSIZE];
+  bool  calojetPassIDTight[OBJECTARRAYSIZE];
+  unsigned int calojet_match_track_index[OBJECTARRAYSIZE];
+  float calojet_min_delta_r_match_track[OBJECTARRAYSIZE];
+  int   calojetNRechits[OBJECTARRAYSIZE];
+  float calojetRechitE[OBJECTARRAYSIZE];
+  float calojetRechitT[OBJECTARRAYSIZE];
 
   //AK4 Jets
   int nJets;
@@ -490,6 +525,12 @@ protected:
   int nPUmean;
   int nPU;
 
+  //PV-Tacks (list of tracks associated with primary vertex with pt>10)
+  int   nPVTracks;
+  float pvTrackPt[OBJECTARRAYSIZE];
+  float pvTrackEta[OBJECTARRAYSIZE];
+  float pvTrackPhi[OBJECTARRAYSIZE];
+
   //MC
 int nGenJets;
 float genJetE[OBJECTARRAYSIZE];
@@ -588,6 +629,8 @@ float gLLP_min_delta_r_match_jet_hcal_loose[LLP_DAUGHTER_ARRAY_SIZE];
 unsigned int gLLP_daughter_match_jet_index[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_min_delta_r_match_jet[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_min_delta_r_nocorr_match_jet[LLP_DAUGHTER_ARRAY_SIZE];
+unsigned int gLLP_daughter_match_calojet_index[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_min_delta_r_match_calojet[LLP_DAUGHTER_ARRAY_SIZE];
 
 // QCD
 int nGenQCDParticles;
@@ -603,6 +646,9 @@ float genParticleQCD_min_delta_r_match_jet[GENPARTICLEARRAYSIZE];
 std::vector<string>  *nameHLT;
 bool triggerDecision[NTriggersMAX];
 int  triggerHLTPrescale[NTriggersMAX];
+
+const float pvTrack_pt_cut = 1.0;
+
 };
 
 #endif
