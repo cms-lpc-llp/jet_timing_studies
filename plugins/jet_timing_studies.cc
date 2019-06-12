@@ -670,7 +670,7 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
 		Measurement1D meas = traj.transverseImpactParameter();
 		std::pair<bool, Measurement1D> ip2d = IPTools::absoluteTransverseImpactParameter(transTrack,primaryVertex);
 		IP2Ds.push_back(ip2d.second.value()/ip2d.second.error());
-		IP2Ds.push_back(fabs(generalTrack.dxy()/generalTrack.dxyError()));
+		// IP2Ds.push_back(fabs(generalTrack.dxy()/generalTrack.dxyError()));
 	    }
 	}
     }
