@@ -114,14 +114,14 @@ jet_timing_studies::jet_timing_studies(const edm::ParameterSet& iConfig):
 
   if(enableTriggerInfo_)
   {
-    std::cout << "\n";
-    std::cout << "****************** Trigger Paths Defined For Razor Ntuple ******************\n";
+    //std::cout << "\n";
+    //std::cout << "****************** Trigger Paths Defined For Razor Ntuple ******************\n";
     for (int i = 0; i<NTriggersMAX; ++i)
     {
-      if (triggerPathNames[i] != "") std::cout << "Trigger " << i << " " << triggerPathNames[i] << "\n";
+      //if (triggerPathNames[i] != "") std::cout << "Trigger " << i << " " << triggerPathNames[i] << "\n";
     }
-    std::cout << "****************************************************************************\n";
-    std::cout << "\n";
+    //std::cout << "****************************************************************************\n";
+    //std::cout << "\n";
   }
   if(readGenVertexTime_) genParticles_t0_Token_ = consumes<float>(iConfig.getParameter<edm::InputTag>("genParticles_t0"));
   /*
@@ -255,7 +255,6 @@ void jet_timing_studies::setBranches(){
   // llpTree->Branch("fJetPhotonRecHitE", "std::vector<float>",&fJetPhotonRecHitE);
   // llpTree->Branch("fJetPhotonRecHitTime", "std::vector<float>",&fJetPhotonRecHitTime);
 
-  cout << "BRANCHES\n";
   enablePVTracksBranches();
   enableFatJetBranches();
   enableMCBranches();
@@ -441,10 +440,21 @@ void jet_timing_studies::enableCaloJetBranches()
   llpTree->Branch("calojetNRechits", calojetNRechits,"calojetNRechits[nCaloJets]/I");
   llpTree->Branch("calojetRechitE", calojetRechitE,"calojetRechitE[nCaloJets]/F");
   llpTree->Branch("calojetRechitT", calojetRechitT,"calojetRechitT[nCaloJets]/F");
+  llpTree->Branch("calo_jet_photon_match_E", calo_jet_photon_match_E,"calo_jet_photon_match_E[nCaloJets]/F");
+  llpTree->Branch("calo_jet_photon_match_T", calo_jet_photon_match_T,"calo_jet_photon_match_T[nCaloJets]/F");
+
   llpTree->Branch("calojet_match_track_index",calojet_match_track_index,"calojet_match_track_index[nCaloJets]/i");
+  llpTree->Branch("calojet_match_photon_index", calojet_match_photon_index,"calojet_match_photon_index[nCaloJets]/i");
+
+
   llpTree->Branch("calojet_min_delta_r_match_track",calojet_min_delta_r_match_track,"calojet_min_delta_r_match_track[nCaloJets]/F");
-
-
+  llpTree->Branch("n_photon_match", n_photon_match,"n_photon_match[nCaloJets]/i");
+  llpTree->Branch("n_photon_match_rechits", n_photon_match_rechits, "n_photon_match_rechits[nCaloJets]/i");
+  llpTree->Branch("eta_photon_match", eta_photon_match,"eta_photon_match[nCaloJets][100]/F");
+  llpTree->Branch("phi_photon_match", phi_photon_match,"phi_photon_match[nCaloJets][100]/F");
+  llpTree->Branch("e_photon_match", e_photon_match,"e_photon_match[nCaloJets][100]/F");
+  llpTree->Branch("deltaR_photon_match", deltaR_photon_match,"deltaR_photon_match[nCaloJets][100]/F");
+  llpTree->Branch("deltaR_e_weight_photon_match", deltaR_e_weight_photon_match,"deltaR_e_weight_photon_match[nCaloJets]/F");
 };
 
 void jet_timing_studies::enableGenParticleBranches(){
@@ -647,8 +657,8 @@ void jet_timing_studies::resetCaloJetBranches()
     calojetPassIDTight[i] = false;
     calojet_match_track_index[i] = 666;
     calojet_min_delta_r_match_track[i] = -666.;
-
-
+    calojet_match_photon_index[i] = 666;
+    n_photon_match[i] = 0;
     // calojetPassMuFrac[i] = false;
     // calojetPassEleFrac[i] = false;
     // calojetPartonFlavor[i] = 0;
@@ -669,6 +679,17 @@ void jet_timing_studies::resetCaloJetBranches()
     calojetNRechits[i] = 0;
     calojetRechitE[i] = 0.0;
     calojetRechitT[i] = 0.0;
+    calo_jet_photon_match_E[i] = 0.0;
+    calo_jet_photon_match_T[i] = 0.0;
+    n_photon_match_rechits[i] = 0;
+    deltaR_e_weight_photon_match[i] = 0.0;
+    for( int j = 0; j < MAXJETPHOTON; j++)
+    {
+      eta_photon_match[i][j]    = -666.;
+      phi_photon_match[i][j]    = -666.;
+      e_photon_match[i][j]      = -666.;
+      deltaR_photon_match[i][j] = -666.;
+    }
   }
   return;
 };
@@ -1241,6 +1262,8 @@ bool jet_timing_studies::fillCaloJets(const edm::EventSetup& iSetup)
     thisJet.SetPtEtaPhiE(calojetPt[nCaloJets], calojetEta[nCaloJets], calojetPhi[nCaloJets], calojetE[nCaloJets]);
     //calojetCISV = j.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
 
+
+
     calojetJetArea[nCaloJets] = j.jetArea();
     calojetPileupE[nCaloJets] = j.pileup();
 
@@ -1285,6 +1308,86 @@ bool jet_timing_studies::fillCaloJets(const edm::EventSetup& iSetup)
     const CaloSubdetectorGeometry *barrelGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
     //const CaloSubdetectorGeometry *endcapGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalEndcap);
     //double ecal_radius = 129.0;
+
+
+    //----------------------------
+    //Jet matching to photons
+    //----------------------------
+    double min_delta_r_photon = 666.;
+    int min_photon_index   = -666;
+    int i_photon = 0;
+    const float jet_match_dr = 0.3;
+    float total_match_photon_e = 0.0;
+    //std::cout << "=======================" << std::endl;
+    for (const reco::PFCandidate &pfcand : *pfCands)
+    {
+      if ( abs(pfcand.particleId()) == 4 && pfcand.energy()>0.5)
+      {
+        //double eta = pfcand.superClusterRef().size();
+        double current_delta_r_photon = deltaR(calojetEta[nCaloJets],calojetPhi[nCaloJets] , pfcand.eta(), pfcand.phi());
+        if ( current_delta_r_photon < jet_match_dr )
+        {
+          eta_photon_match[nCaloJets][n_photon_match[nCaloJets]] = pfcand.eta();
+          phi_photon_match[nCaloJets][n_photon_match[nCaloJets]] = pfcand.phi();
+          e_photon_match[nCaloJets][n_photon_match[nCaloJets]] = pfcand.energy();
+          total_match_photon_e += pfcand.energy();
+          deltaR_photon_match[nCaloJets][n_photon_match[nCaloJets]] = current_delta_r_photon;
+          deltaR_e_weight_photon_match[nCaloJets] += pfcand.energy()*current_delta_r_photon;
+          std::cout << deltaR_e_weight_photon_match[nCaloJets] << " total_match_photon_e: " << total_match_photon_e
+          << " " << current_delta_r_photon << std::endl;
+          n_photon_match[nCaloJets]++;
+          //--------------------------------------------------
+          //Matching rechits to matched photons inside the jet
+          //--------------------------------------------------
+          for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
+          {
+            if (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird)) continue;
+            if (recHit->timeError() < 0 || recHit->timeError() > 100) continue;
+            if ( recHit->checkFlag(0) )
+            {
+              const DetId recHitId = recHit->detid();
+              const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
+              //correct ecal-rechit to PV position
+              TVector3 ecal_rechit_v3(recHitPos.x(),recHitPos.y(),recHitPos.z());
+              TVector3 pv_v3(pvX,pvY,pvZ);
+              //get direction to PV
+              TVector3 ecal_rechit_v3_corrected = ecal_rechit_v3 - pv_v3;
+              double rechit_eta_corrected = ecal_rechit_v3_corrected.Eta();
+              double rechit_phi_corrected = ecal_rechit_v3_corrected.Phi();
+              if ( deltaR(rechit_eta_corrected,rechit_phi_corrected, pfcand.eta(), pfcand.phi()) < 0.035)
+              {
+                if( recHit->energy() > 0.5 )
+                {
+                  calo_jet_photon_match_E[nCaloJets] += recHit->energy();
+                  calo_jet_photon_match_T[nCaloJets] += recHit->energy()*recHit->time();
+                }
+                n_photon_match_rechits[nCaloJets]++;
+              }
+              //std::cout << "rechit->r: " << sqrt(pow(recHitPos.x(),2)+pow(recHitPos.y(),2)) << std::endl;
+              //std::cout << "rechit->eta: " << recHitPos.eta() << "; rechit->eta_corr: " << ecal_rechit_v3_corrected.Eta() << std::endl;
+            }
+
+          }
+        }
+        if ( current_delta_r_photon < min_delta_r_photon )
+        {
+          min_delta_r_photon = current_delta_r_photon;
+          min_photon_index = i_photon;
+        }
+      }
+      i_photon++;
+    }//end matching photons to jets
+     //std::cout << "=======================" << std::endl;
+     deltaR_e_weight_photon_match[nCaloJets] = deltaR_e_weight_photon_match[nCaloJets]/total_match_photon_e;
+     calo_jet_photon_match_T[nCaloJets] = calo_jet_photon_match_T[nCaloJets]/calo_jet_photon_match_E[nCaloJets];
+
+     if ( min_delta_r_photon < 0.6 )
+     {
+       calojet_match_photon_index[nCaloJets] = min_photon_index;
+       //calojet_min_delta_r_match_track[nCaloJets] = min_delta_r;
+     }
+
+
     int n_matched_rechits = 0;
     for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
     {
@@ -1294,7 +1397,7 @@ bool jet_timing_studies::fillCaloJets(const edm::EventSetup& iSetup)
       {
         const DetId recHitId = recHit->detid();
         const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
-        if ( deltaR(calojetEta[nCaloJets], calojetPhi[nCaloJets], recHitPos.eta(), recHitPos.phi())  < 0.4)
+        if ( deltaR(calojetEta[nCaloJets], calojetPhi[nCaloJets], recHitPos.eta(), recHitPos.phi())  < jet_match_dr )
         {
           //double rechit_x = ecal_radius * cos(recHitPos.phi());
           //double rechit_y = ecal_radius * sin(recHitPos.phi());
@@ -1390,7 +1493,7 @@ bool jet_timing_studies::fill_fat_jet(const edm::EventSetup& iSetup)
       {
         const DetId recHitId = recHit->detid();
         const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
-        if ( deltaR(fat_jetEta[i_fat_jet], fat_jetPhi[i_fat_jet], recHitPos.eta(), recHitPos.phi())  < 0.4)
+        if ( deltaR(fat_jetEta[i_fat_jet], fat_jetPhi[i_fat_jet], recHitPos.eta(), recHitPos.phi())  < 0.4 )
         {
           fat_jet_rechit_E[i_fat_jet] += recHit->energy();
           fat_jet_rechit_T[i_fat_jet] += recHit->time()*recHit->energy();
