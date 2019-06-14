@@ -26,6 +26,11 @@ using namespace std;
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "TrackingTools/IPTools/interface/IPTools.h"
+#include "DataFormats/GeometryCommonDetAlgo/interface/Measurement1D.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
+#include "TrackingTools/Records/interface/TransientTrackRecord.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrack.h"
 
 //CMSSW package includes
 #include "FWCore/Framework/interface/LuminosityBlock.h"
@@ -126,6 +131,7 @@ public:
   virtual void setBranches();
   void reset_event_variables();
   void resetPVTracksBranches();
+  void findTrackingVariables(const TLorentzVector &jetVec,const edm::EventSetup& iSetup,float &alphaMax,float &medianTheta2D,float &medianIP, int &nTracksPV,float &ptAllPVTracks,float &ptAllTracks,float &minDeltaRAllTracks, float &minDeltaRPVTracks);
   void reset_photon_variable();
   void resetCaloJetBranches();
   void reset_jet_variables();
@@ -252,6 +258,7 @@ protected:
   edm::EDGetTokenT<vector<reco::Conversion> > singleLegConversionsToken_;
   edm::EDGetTokenT<vector<reco::GsfElectronCore> > gedGsfElectronCoresToken_;
   edm::EDGetTokenT<vector<reco::PhotonCore> > gedPhotonCoresToken_;
+  edm::EDGetTokenT<vector<reco::Track> > generalTrackToken_;
   //  edm::EDGetTokenT<vector<reco::SuperCluster> > superClustersToken_;
   //  edm::EDGetTokenT<vector<reco::PFCandidate> > lostTracksToken_;
   edm::EDGetTokenT<float> genParticles_t0_Token_;
@@ -312,6 +319,7 @@ protected:
   edm::Handle<vector<reco::Conversion>> singleLegConversions;
   edm::Handle<vector<reco::GsfElectronCore> > gedGsfElectronCores;
   edm::Handle<vector<reco::PhotonCore> > gedPhotonCores;
+  edm::Handle<std::vector<reco::Track>> generalTracks;
   //  edm::Handle<vector<reco::SuperCluster> > superClusters;
   //  edm::Handle<vector<reco::PFCandidate> > lostTracks;
   edm::Handle<float> genParticles_t0;
@@ -338,6 +346,13 @@ protected:
   // float calojetProbudsg[OBJECTARRAYSIZE];
   // float calojetProbbb[OBJECTARRAYSIZE];
   float calojetMass[OBJECTARRAYSIZE];
+  float calojetAlphaMax[OBJECTARRAYSIZE];
+  float calojetPtAllTracks[OBJECTARRAYSIZE];
+  float calojetPtAllPVTracks[OBJECTARRAYSIZE];
+  float calojetMedianTheta2D[OBJECTARRAYSIZE];
+  float calojetMedianIP[OBJECTARRAYSIZE];
+  float calojetMinDeltaRAllTracks[OBJECTARRAYSIZE];
+  float calojetMinDeltaRPVTracks[OBJECTARRAYSIZE];
   float calojetJetArea[OBJECTARRAYSIZE];
   float calojetPileupE[OBJECTARRAYSIZE];
   float calojetPileupId[OBJECTARRAYSIZE];
@@ -372,6 +387,13 @@ protected:
   float jetPhi[OBJECTARRAYSIZE];
   float jetCISV[OBJECTARRAYSIZE];
   float jetMass[OBJECTARRAYSIZE];
+  float jetAlphaMax[OBJECTARRAYSIZE];
+  float jetPtAllTracks[OBJECTARRAYSIZE];
+  float jetPtAllPVTracks[OBJECTARRAYSIZE];
+  float jetMedianTheta2D[OBJECTARRAYSIZE];
+  float jetMedianIP[OBJECTARRAYSIZE];
+  float jetMinDeltaRAllTracks[OBJECTARRAYSIZE];
+  float jetMinDeltaRPVTracks[OBJECTARRAYSIZE];
   float jetJetArea[OBJECTARRAYSIZE];
   float jetPileupE[OBJECTARRAYSIZE];
   float jetPileupId[OBJECTARRAYSIZE];
