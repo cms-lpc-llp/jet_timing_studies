@@ -1467,8 +1467,8 @@ bool jet_timing_studies::fillCaloJets(const edm::EventSetup& iSetup)
           total_match_photon_e += pfcand.energy();
           deltaR_photon_match[nCaloJets][n_photon_match[nCaloJets]] = current_delta_r_photon;
           deltaR_e_weight_photon_match[nCaloJets] += pfcand.energy()*current_delta_r_photon;
-          std::cout << deltaR_e_weight_photon_match[nCaloJets] << " total_match_photon_e: " << total_match_photon_e
-          << " " << current_delta_r_photon << std::endl;
+          //std::cout << deltaR_e_weight_photon_match[nCaloJets] << " total_match_photon_e: " << total_match_photon_e
+          //<< " " << current_delta_r_photon << std::endl;
           n_photon_match[nCaloJets]++;
           //--------------------------------------------------
           //Matching rechits to matched photons inside the jet
