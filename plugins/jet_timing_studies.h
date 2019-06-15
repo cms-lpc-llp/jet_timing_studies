@@ -59,6 +59,7 @@ using namespace std;
 #include "SimDataFormats/GeneratorProducts/interface/GenLumiInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenLumiInfoHeader.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "DataFormats/EgammaReco/interface/SuperCluster.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 #include "RecoEcal/EgammaCoreTools/interface/EcalClusterLazyTools.h"
 
@@ -107,6 +108,7 @@ using namespace std;
 #define OBJECTARRAYSIZE 2000
 #define RECHITARRAYSIZE 2000
 #define GENPARTICLEARRAYSIZE 2000
+#define MAXJETPHOTON 100
 #define MAX_NPV 600
 #define MAX_NTRACK 2000
 #define MAX_NPU 300
@@ -366,7 +368,17 @@ protected:
   bool  calojetPassIDTight[OBJECTARRAYSIZE];
   unsigned int calojet_match_track_index[OBJECTARRAYSIZE];
   float calojet_min_delta_r_match_track[OBJECTARRAYSIZE];
+  unsigned int calojet_match_photon_index[OBJECTARRAYSIZE];
+  unsigned int n_photon_match[OBJECTARRAYSIZE];
+  float eta_photon_match[OBJECTARRAYSIZE][MAXJETPHOTON];
+  float phi_photon_match[OBJECTARRAYSIZE][MAXJETPHOTON];
+  float e_photon_match[OBJECTARRAYSIZE][MAXJETPHOTON];
+  float deltaR_photon_match[OBJECTARRAYSIZE][MAXJETPHOTON];
+  float deltaR_e_weight_photon_match[OBJECTARRAYSIZE];
   int   calojetNRechits[OBJECTARRAYSIZE];
+  unsigned int n_photon_match_rechits[OBJECTARRAYSIZE];
+  float calo_jet_photon_match_E[OBJECTARRAYSIZE];
+  float calo_jet_photon_match_T[OBJECTARRAYSIZE];
   float calojetRechitE[OBJECTARRAYSIZE];
   float calojetRechitT[OBJECTARRAYSIZE];
 
