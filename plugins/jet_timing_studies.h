@@ -337,6 +337,11 @@ protected:
   float calojetPt[OBJECTARRAYSIZE];
   float calojetEta[OBJECTARRAYSIZE];
   float calojetPhi[OBJECTARRAYSIZE];
+  float calojetGammaMax[OBJECTARRAYSIZE];
+  float calojetGammaMax_EM[OBJECTARRAYSIZE];
+  float calojetGammaMax_Hadronic[OBJECTARRAYSIZE];
+  float calojet_EMEnergyFraction[OBJECTARRAYSIZE];
+  float calojet_HadronicEnergyFraction[OBJECTARRAYSIZE];
   // float calojetCSV[OBJECTARRAYSIZE];
   // float calojetCISV[OBJECTARRAYSIZE];
   // float calojetProbb[OBJECTARRAYSIZE];
@@ -345,6 +350,8 @@ protected:
   // float calojetProbbb[OBJECTARRAYSIZE];
   float calojetMass[OBJECTARRAYSIZE];
   float calojetAlphaMax[OBJECTARRAYSIZE];
+  float calojetBetaMax[OBJECTARRAYSIZE];
+
   float calojetPtAllTracks[OBJECTARRAYSIZE];
   float calojetPtAllPVTracks[OBJECTARRAYSIZE];
   float calojetMedianTheta2D[OBJECTARRAYSIZE];
@@ -375,7 +382,12 @@ protected:
   float jetPhi[OBJECTARRAYSIZE];
   float jetCISV[OBJECTARRAYSIZE];
   float jetMass[OBJECTARRAYSIZE];
+  float jetGammaMax[OBJECTARRAYSIZE];
+  float jetGammaMax_EM[OBJECTARRAYSIZE];
+  float jetGammaMax_Hadronic[OBJECTARRAYSIZE];
   float jetAlphaMax[OBJECTARRAYSIZE];
+  float jetBetaMax[OBJECTARRAYSIZE];
+
   float jetPtAllTracks[OBJECTARRAYSIZE];
   float jetPtAllPVTracks[OBJECTARRAYSIZE];
   float jetMedianTheta2D[OBJECTARRAYSIZE];

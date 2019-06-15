@@ -162,6 +162,11 @@ void jet_timing_studies::setBranches(){
   llpTree->Branch("jetCISV", jetCISV,"jetCISV[nJets]/F");
   llpTree->Branch("jetMass", jetMass, "jetMass[nJets]/F");
   llpTree->Branch("jetAlphaMax",jetAlphaMax,"jetAlphaMax[nJets]/F");
+  llpTree->Branch("jetBetaMax",jetBetaMax,"jetBetaMax[nJets]/F");
+
+  llpTree->Branch("jetGammaMax_EM",jetGammaMax_EM,"jetGammaMax_EM[nJets]/F");
+  llpTree->Branch("jetGammaMax_Hadronic",jetGammaMax_Hadronic,"jetGammaMax_Hadronic[nJets]/F");
+  llpTree->Branch("jetGammaMax",jetGammaMax,"jetGammaMax[nJets]/F");
   llpTree->Branch("jetPtAllTracks",jetPtAllTracks,"jetPtAllTracks[nJets]/F");
   llpTree->Branch("jetPtAllPVTracks",jetPtAllPVTracks,"jetPtAllPVTracks[nJets]/F");
   llpTree->Branch("jetMedianTheta2D",jetMedianTheta2D,"jetMedianTheta2D[nJets]/F");
@@ -415,14 +420,15 @@ void jet_timing_studies::enableCaloJetBranches()
   llpTree->Branch("calojetPt", calojetPt,"calojetPt[nCaloJets]/F");
   llpTree->Branch("calojetEta", calojetEta,"calojetEta[nCaloJets]/F");
   llpTree->Branch("calojetPhi", calojetPhi,"calojetPhi[nCaloJets]/F");
-  // llpTree->Branch("calojetCSV", calojetCSV,"calojetCSV[nCaloJets]/F");
-  // llpTree->Branch("calojetCISV", calojetCISV,"calojetCISV[nCaloJets]/F");
-  // llpTree->Branch("calojetProbb", calojetProbb,"calojetProbb[nCaloJets]/F");
-  // llpTree->Branch("calojetProbc", calojetProbc,"calojetProbc[nCaloJets]/F");
-  // llpTree->Branch("calojetProbudsg", calojetProbudsg,"calojetProbudsg[nCaloJets]/F");
-  // llpTree->Branch("calojetProbbb", calojetProbbb,"calojetProbbb[nCaloJets]/F");
+  llpTree->Branch("calojet_HadronicEnergyFraction", calojet_HadronicEnergyFraction,"calojet_HadronicEnergyFraction[nCaloJets]/F");
+  llpTree->Branch("calojet_EMEnergyFraction", calojet_EMEnergyFraction,"calojet_EMEnergyFraction[nCaloJets]/F");
+  llpTree->Branch("calojetGammaMax_EM",calojetGammaMax_EM,"calojetGammaMax_EM[nCaloJets]/F");
+  llpTree->Branch("calojetGammaMax_Hadronic",calojetGammaMax_Hadronic,"calojetGammaMax_Hadronic[nCaloJets]/F");
+  llpTree->Branch("calojetGammaMax",calojetGammaMax,"calojetGammaMax[nCaloJets]/F");
+
   llpTree->Branch("calojetMass", calojetMass, "calojetMass[nCaloJets]/F");
   llpTree->Branch("calojetAlphaMax",calojetAlphaMax,"calojetAlphaMax[nCaloJets]/F");
+  llpTree->Branch("calojetBetaMax",calojetBetaMax,"calojetBetaMax[nCaloJets]/F");
   llpTree->Branch("calojetPtAllTracks",calojetPtAllTracks,"calojetPtAllTracks[nCaloJets]/F");
   llpTree->Branch("calojetPtAllPVTracks",calojetPtAllPVTracks,"calojetPtAllPVTracks[nCaloJets]/F");
   llpTree->Branch("calojetMedianTheta2D",calojetMedianTheta2D,"calojetMedianTheta2D[nCaloJets]/F");
@@ -629,86 +635,88 @@ void jet_timing_studies::resetPVTracksBranches()
 };
 void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,const edm::EventSetup& iSetup,float &alphaMax,float &medianTheta2D,float &medianIP, int &nTracksPV,float &ptAllPVTracks,float &ptAllTracks,float &minDeltaRAllTracks, float &minDeltaRPVTracks)
 {
-    int nTracksAll = 0;
-    //Displaced jet stuff
-    double ptPVTracksMax = 0.;
-    minDeltaRAllTracks = 15;
-    minDeltaRPVTracks = 15;
-    reco::Vertex primaryVertex = vertices->at(0);
-    std::vector<double> theta2Ds;
-    std::vector<double> IP2Ds;
-    for (unsigned int iTrack = 0; iTrack < generalTracks->size(); iTrack ++){
-	reco::Track generalTrack = generalTracks->at(iTrack);
-	TLorentzVector generalTrackVecTemp;
-	generalTrackVecTemp.SetPtEtaPhiM(generalTrack.pt(),generalTrack.eta(),generalTrack.phi(),0);
-	
-	if (generalTrack.pt() > 1) {
-	    if (minDeltaRAllTracks > generalTrackVecTemp.DeltaR(jetVec))
-	    {
-		minDeltaRAllTracks =  generalTrackVecTemp.DeltaR(jetVec);
-	    }
-	    if (generalTrackVecTemp.DeltaR(jetVec) < 0.4){
-		nTracksAll ++;
-		//tot pt for alpha
-		ptAllTracks += generalTrack.pt();
+  int nTracksAll = 0;
+  //Displaced jet stuff
+  double ptPVTracksMax = 0.;
+  minDeltaRAllTracks = 15;
+  minDeltaRPVTracks = 15;
+  reco::Vertex primaryVertex = vertices->at(0);
+  std::vector<double> theta2Ds;
+  std::vector<double> IP2Ds;
+  for (unsigned int iTrack = 0; iTrack < generalTracks->size(); iTrack ++){
+    reco::Track generalTrack = generalTracks->at(iTrack);
+    TLorentzVector generalTrackVecTemp;
+    generalTrackVecTemp.SetPtEtaPhiM(generalTrack.pt(),generalTrack.eta(),generalTrack.phi(),0);
 
-		// theta 2d
-		// ROOT::Math::XYZPoint innerPos = generalTrack.innerPosition();
-		// ROOT::Math::XYZPoint vertexPos = primaryVertex.position();
-		// ROOT::Math::XYZVector deltaPos = innerPos - vertexPos;
-		// ROOT::Math::XYZVector momentum = generalTrack.innerMomentum();
-		// double mag2DeltaPos = TMath::Sqrt((deltaPos.x()*deltaPos.x()) + (deltaPos.y()*deltaPos.y()));
-		// double mag2Mom = TMath::Sqrt((momentum.x()*momentum.x()) + (momentum.y()*momentum.y()));
-		// double theta2D = TMath::ACos((deltaPos.x()*momentum.x()+deltaPos.y()*momentum.y())/(mag2Mom*mag2DeltaPos));
-		// theta2Ds.push_back(theta2D);
+    if (generalTrack.pt() > 1) {
+      if (minDeltaRAllTracks > generalTrackVecTemp.DeltaR(jetVec))
+      {
+    	    minDeltaRAllTracks =  generalTrackVecTemp.DeltaR(jetVec);
+      }
+      if (generalTrackVecTemp.DeltaR(jetVec) < 0.4){
+      	nTracksAll ++;
+      	//tot pt for alpha
+      	ptAllTracks += generalTrack.pt();
 
-		//IP sig
-		edm::ESHandle<TransientTrackBuilder> theB;
-		iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
-		reco::TransientTrack transTrack = theB->build(generalTrack);
-		TrajectoryStateClosestToBeamLine traj = transTrack.stateAtBeamLine();
-		Measurement1D meas = traj.transverseImpactParameter();
-		std::pair<bool, Measurement1D> ip2d = IPTools::absoluteTransverseImpactParameter(transTrack,primaryVertex);
-		IP2Ds.push_back(ip2d.second.value()/ip2d.second.error());
-		// IP2Ds.push_back(fabs(generalTrack.dxy()/generalTrack.dxyError()));
-	    }
-	}
+    		// theta 2d
+    		// ROOT::Math::XYZPoint innerPos = generalTrack.innerPosition();
+    		// ROOT::Math::XYZPoint vertexPos = primaryVertex.position();
+    		// ROOT::Math::XYZVector deltaPos = innerPos - vertexPos;
+    		// ROOT::Math::XYZVector momentum = generalTrack.innerMomentum();
+    		// double mag2DeltaPos = TMath::Sqrt((deltaPos.x()*deltaPos.x()) + (deltaPos.y()*deltaPos.y()));
+    		// double mag2Mom = TMath::Sqrt((momentum.x()*momentum.x()) + (momentum.y()*momentum.y()));
+    		// double theta2D = TMath::ACos((deltaPos.x()*momentum.x()+deltaPos.y()*momentum.y())/(mag2Mom*mag2DeltaPos));
+    		// theta2Ds.push_back(theta2D);
+
+    		//IP sig
+    		edm::ESHandle<TransientTrackBuilder> theB;
+    		iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
+    		reco::TransientTrack transTrack = theB->build(generalTrack);
+    		TrajectoryStateClosestToBeamLine traj = transTrack.stateAtBeamLine();
+    		Measurement1D meas = traj.transverseImpactParameter();
+    		std::pair<bool, Measurement1D> ip2d = IPTools::absoluteTransverseImpactParameter(transTrack,primaryVertex);
+    		IP2Ds.push_back(ip2d.second.value()/ip2d.second.error());
+    		// IP2Ds.push_back(fabs(generalTrack.dxy()/generalTrack.dxyError()));
+      }
+     }
     }
     if (ptAllTracks > 0.9){
 	//No matched jets
-	for (auto vertex = vertices->begin(); vertex != vertices->end(); vertex++){
-	    double ptPVTracks = 0.;
-	    int nTracksPVTemp = 0;
+	   for (auto vertex = vertices->begin(); vertex != vertices->end(); vertex++){
+      double ptPVTracks = 0.;
+      int nTracksPVTemp = 0;
 	    for(auto pvTrack=vertex->tracks_begin(); pvTrack!=vertex->tracks_end(); pvTrack++){
-		TLorentzVector pvTrackVecTemp;
-		pvTrackVecTemp.SetPtEtaPhiM((*pvTrack)->pt(),(*pvTrack)->eta(),(*pvTrack)->phi(),0);
-		//If pv track associated with jet add pt to ptPVTracks
-		if ((*pvTrack)->pt() > 1) {
-		    if (minDeltaRPVTracks > pvTrackVecTemp.DeltaR(jetVec))
-		    {
-			minDeltaRPVTracks =  pvTrackVecTemp.DeltaR(jetVec);
-		    }
-		    if (pvTrackVecTemp.DeltaR(jetVec) < 0.4){
-			ptPVTracks += (*pvTrack)->pt();
-			ptAllPVTracks += (*pvTrack)->pt();
-			nTracksPVTemp++;
-		    }
-		}
+    		TLorentzVector pvTrackVecTemp;
+    		pvTrackVecTemp.SetPtEtaPhiM((*pvTrack)->pt(),(*pvTrack)->eta(),(*pvTrack)->phi(),0);
+    		//If pv track associated with jet add pt to ptPVTracks
+	      if ((*pvTrack)->pt() > 1) {
+  		    if (minDeltaRPVTracks > pvTrackVecTemp.DeltaR(jetVec))
+  		    {
+			       minDeltaRPVTracks =  pvTrackVecTemp.DeltaR(jetVec);
+  		    }
+	        if (pvTrackVecTemp.DeltaR(jetVec) < 0.4){
+      			ptPVTracks += (*pvTrack)->pt();
+      			ptAllPVTracks += (*pvTrack)->pt();
+      			nTracksPVTemp++;
+	        }
+	      }
 	    }
 	    if (ptPVTracks > ptPVTracksMax) {
-		ptPVTracksMax = ptPVTracks;
-		nTracksPV = nTracksPVTemp;
+    		ptPVTracksMax = ptPVTracks;
+    		nTracksPV = nTracksPVTemp;
 	    }
 	    alphaMax = ptPVTracksMax/ptAllTracks;
-	}
+
+	   }
     }
     std::sort(IP2Ds.begin(),IP2Ds.end());
     if (IP2Ds.size() > 0){
-	medianIP = IP2Ds[IP2Ds.size()/2];
+     medianIP = IP2Ds[IP2Ds.size()/2];
+
     }
     std::sort(theta2Ds.begin(),theta2Ds.end());
     if (theta2Ds.size() > 0){
-	medianTheta2D = theta2Ds[theta2Ds.size()/2];
+     medianTheta2D = theta2Ds[theta2Ds.size()/2];
     }
 };
 
@@ -739,6 +747,11 @@ void jet_timing_studies::resetCaloJetBranches()
     // calojetCISV[i] = 0.0;
     calojetMass[i] =  -99.0;
     calojetAlphaMax[i] = -99.0;
+    calojetBetaMax[i] = -99.0;
+    calojetGammaMax[i] = -99.0;
+    calojetGammaMax_EM[i] = -99.0;
+    calojetGammaMax_Hadronic[i] = -99.0;
+
     calojetPtAllTracks[i] = -99.0;
     calojetPtAllPVTracks[i] = -99.0;
     calojetMedianTheta2D[i] = -99.0;
@@ -753,7 +766,8 @@ void jet_timing_studies::resetCaloJetBranches()
     calojetPassIDTight[i] = false;
     calojet_match_track_index[i] = 666;
     calojet_min_delta_r_match_track[i] = -666.;
-
+    calojet_HadronicEnergyFraction[i] = -666.;
+    calojet_EMEnergyFraction[i] = -666.;
 
     // calojetPassMuFrac[i] = false;
     // calojetPassEleFrac[i] = false;
@@ -791,7 +805,11 @@ void jet_timing_studies::reset_jet_variables()
     jetPhi[i] = 0.0;
     jetCISV[i] = 0.0;
     jetMass[i] =  -99.0;
+    jetGammaMax[i] = -99.0;
+    jetGammaMax_EM[i] = -99.0;
+    jetGammaMax_Hadronic[i] = -99.0;
     jetAlphaMax[i] = -99.0;
+    jetBetaMax[i] = -99.0;
     jetPtAllTracks[i] = -99.0;
     jetPtAllPVTracks[i] = -99.0;
     jetMedianTheta2D[i] = -99.0;
@@ -1046,7 +1064,7 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
   for (const reco::PFJet &j : *jets)
   {
     //resetBranches();
-    if (j.pt() < 20) continue;
+    if (j.pt() < 0) continue;
     if (fabs(j.eta()) > 2.4) continue;
 
 
@@ -1067,6 +1085,10 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
     findTrackingVariables(thisJet,iSetup,alphaMax,medianTheta2D,medianIP,nTracksPV,ptAllPVTracks,ptAllTracks, minDeltaRAllTracks, minDeltaRPVTracks);
     //jetCISV = j.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
     jetAlphaMax[i_jet] = alphaMax;
+    jetBetaMax[i_jet] = alphaMax * ptAllTracks/(j.pt());
+    jetGammaMax[i_jet] = alphaMax * ptAllTracks/(j.energy());
+    jetGammaMax_EM[i_jet] = alphaMax * ptAllTracks/(j.energy()*(j.chargedEmEnergyFraction()+j.neutralEmEnergyFraction()));
+    jetGammaMax_Hadronic[i_jet] = alphaMax * ptAllTracks/(j.energy()*(j.chargedHadronEnergyFraction()+j.neutralHadronEnergyFraction()));
     jetMedianTheta2D[i_jet] = medianTheta2D;
     jetMedianIP[i_jet] = medianIP;
     jetPtAllPVTracks[i_jet] = ptAllPVTracks;
@@ -1349,7 +1371,7 @@ bool jet_timing_studies::fillCaloJets(const edm::EventSetup& iSetup)
 {
   for (const reco::CaloJet &j : *jetsCalo)
   {
-    if (j.pt() < 20) continue;
+    if (j.pt() < 0) continue;
     if (fabs(j.eta()) > 2.4) continue;
     //-------------------
     //Fill Jet-Level Info
@@ -1359,6 +1381,8 @@ bool jet_timing_studies::fillCaloJets(const edm::EventSetup& iSetup)
     calojetEta[nCaloJets] = j.eta();
     calojetPhi[nCaloJets] = j.phi();
     calojetMass[nCaloJets] = j.mass();
+    calojet_HadronicEnergyFraction[nCaloJets] = j.energyFractionHadronic();
+    calojet_EMEnergyFraction[nCaloJets] = j.emEnergyFraction();
 
     TLorentzVector thisJet;
     thisJet.SetPtEtaPhiE(calojetPt[nCaloJets], calojetEta[nCaloJets], calojetPhi[nCaloJets], calojetE[nCaloJets]);
@@ -1368,6 +1392,10 @@ bool jet_timing_studies::fillCaloJets(const edm::EventSetup& iSetup)
     findTrackingVariables(thisJet,iSetup,alphaMax,medianTheta2D,medianIP,nTracksPV,ptAllPVTracks,ptAllTracks, minDeltaRAllTracks, minDeltaRPVTracks);
     //jetCISV = j.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
     calojetAlphaMax[nCaloJets] = alphaMax;
+    calojetBetaMax[nCaloJets] = alphaMax * ptAllTracks/j.pt();
+    calojetGammaMax[nCaloJets] = alphaMax * ptAllTracks/(j.energy());
+    calojetGammaMax_EM[nCaloJets] = alphaMax * ptAllTracks/(j.energy()*j.emEnergyFraction());
+    calojetGammaMax_Hadronic[nCaloJets] =  alphaMax * ptAllTracks/(j.energy()*j.energyFractionHadronic());
     calojetMedianTheta2D[nCaloJets] = medianTheta2D;
     calojetMedianIP[nCaloJets] = medianIP;
     calojetPtAllPVTracks[nCaloJets] = ptAllPVTracks;
