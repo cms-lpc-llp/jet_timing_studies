@@ -262,6 +262,7 @@ void jet_timing_studies::setBranches(){
   if (enableTriggerInfo_) enableTriggerBranches();
   if (isQCD_)enableQCDBranches();
 };
+/*
 void llp_ntupler::enableElectronBranches()
 {
   llpTree->Branch("nElectrons", &nElectrons,"nElectrons/I");
@@ -308,7 +309,7 @@ void llp_ntupler::enableElectronBranches()
   llpTree->Branch("ele_passTPTwoProbeFilter", ele_passTPTwoProbeFilter, "ele_passTPTwoProbeFilter[nElectrons]/O");
   llpTree->Branch("ele_passHLTFilter", &ele_passHLTFilter, Form("ele_passHLTFilter[nElectrons][%d]/O",MAX_ElectronHLTFilters));
 };
-
+*/
 void jet_timing_studies::enableFatJetBranches()
 {
   llpTree->Branch("n_fat_Jets", &n_fat_Jets,"n_fat_Jets/I");

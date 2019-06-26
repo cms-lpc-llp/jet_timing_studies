@@ -34,6 +34,7 @@ process.source = cms.Source("PoolSource",
 #'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_1J_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11_ext1-v1/110000/C47D3025-0857-E911-B792-00259048A8F4.root',
 #'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_1J_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11_ext1-v1/110000/CA371157-8B56-E911-A413-0CC47A57CCF4.root',
 #'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_1J_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11_ext1-v1/110000/E841590F-2756-E911-8DD3-0CC47A0AD742.root',
+
 'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11-v3/260000/36BB19B7-E373-E911-BF36-0CC47A0AD630.root',
 'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11-v3/260000/62643DEC-3C74-E911-B041-002590D9D8D4.root',
 'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11-v3/260000/C8299DC5-3C74-E911-9C58-002590D9D990.root',
@@ -46,6 +47,9 @@ process.source = cms.Source("PoolSource",
 'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11-v3/70000/1813DDA4-2C59-E911-993E-0CC47A0AD3BC.root',
 'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11-v3/70000/206F691F-1259-E911-955B-0CC47AD24D28.root',
 'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11-v3/70000/2095DEFF-1C5A-E911-B3B7-0025907D2502.root',
+
+#'file:/mnt/hadoop/store/user/christiw/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_mh125_mx50_pl500_ev100000/crab_CMSSW_7_6_3_ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_ISR_mh125_mx50_pl500_ev100000_GENSIM_CaltechT2/190318_212603/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_step0_93.root',
+
 #'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11-v3/70000/2E5D0ACE-2A59-E911-82B3-0CC47A0AD4A4.root',
 #'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11-v3/70000/3E918620-F85A-E911-B4E6-0CC47A57D036.root',
 #'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_94X_mc2017_realistic_v11-v3/70000/466A9267-2E5A-E911-BF85-002590D9D8BE.root',
@@ -64,7 +68,7 @@ process.source = cms.Source("PoolSource",
 
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-process.MessageLogger.cerr.FwkReport.reportEvery = 10000
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 #TFileService for output
 process.TFileService = cms.Service("TFileService",
