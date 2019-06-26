@@ -290,6 +290,7 @@ void jet_timing_studies::setBranches(){
   if (enableTriggerInfo_) enableTriggerBranches();
   if (isQCD_)enableQCDBranches();
 };
+/*
 void jet_timing_studies::enablePVTracksBranches()
 {
   llpTree->Branch("nPVTracks", &nPVTracks,"nPVTracks/I");
@@ -297,6 +298,7 @@ void jet_timing_studies::enablePVTracksBranches()
   llpTree->Branch("pvTrackEta", pvTrackEta,"pvTrackEta[nPVTracks]/F");
   llpTree->Branch("pvTrackPhi", pvTrackPhi,"pvTrackPhi[nPVTracks]/F");
 };
+*/
 void jet_timing_studies::enableMuonSystemBranches()
 {
 
@@ -340,6 +342,7 @@ void jet_timing_studies::enableMuonSystemBranches()
     llpTree->Branch("dtT",dtT,"dtT[nDt]");
     llpTree->Branch("dtTError",dtTError,"dtTError[nDt]");
 };
+>>>>>>> 8ac97f384027d842409bc9d080054a3963f733cc
 void jet_timing_studies::enableFatJetBranches()
 {
   llpTree->Branch("n_fat_Jets", &n_fat_Jets,"n_fat_Jets/I");
