@@ -156,7 +156,7 @@ void jet_timing_studies::setBranches(){
   llpTree->Branch("Rho", &Rho, "Rho/F");
   llpTree->Branch("nPU", &nPU, "nPU/I");
   llpTree->Branch("nPUmean", &nPUmean, "nPUmean/F");
-  llpTree->Branch("PV_x", PV_x, "PV_x[n]/F");
+  llpTree->Branch("PV_x", PV_x, "PV_x[nPV]/F");
   llpTree->Branch("PV_y", PV_y, "PV_y[nPV]/F");
   llpTree->Branch("PV_z", PV_z, "PV_z[nPV]/F");
 
@@ -183,6 +183,8 @@ void jet_timing_studies::setBranches(){
   llpTree->Branch("jetMedianIP",jetMedianIP,"jetMedianIP[nJets]/F");
   llpTree->Branch("jetMinDeltaRAllTracks",jetMinDeltaRAllTracks,"jetMinDeltaRAllTracks[nJets]/F");
   llpTree->Branch("jetMinDeltaRPVTracks",jetMinDeltaRPVTracks,"jetMinDeltaRPVTracks[nJets]/F");
+  llpTree->Branch("jetptPVTracks","std::vector<vector<double>>(nJets)",&jetptPVTracks);
+  llpTree->Branch("jetnMatchedPVTracks","std::vector<vector<int> >(nJets)",&jetnMatchedPVTracks);
   llpTree->Branch("jetJetArea", jetJetArea, "jetJetArea[nJets]/F");
   llpTree->Branch("jetPileupE", jetPileupE, "jetPileupE[nJets]/F");
   llpTree->Branch("jetPileupId", jetPileupId, "jetPileupId[nJets]/F");
@@ -492,6 +494,8 @@ void jet_timing_studies::enableCaloJetBranches()
   llpTree->Branch("calojetMedianIP",calojetMedianIP,"calojetMedianIP[nCaloJets]/F");
   llpTree->Branch("calojetMinDeltaRAllTracks",calojetMinDeltaRAllTracks,"calojetMinDeltaRAllTracks[nCaloJets]/F");
   llpTree->Branch("calojetMinDeltaRPVTracks",calojetMinDeltaRPVTracks,"calojetMinDeltaRPVTracks[nCaloJets]/F");
+  llpTree->Branch("calojetptPVTracks","std::vector<vector<double>>(nCaloJets)",&calojetptPVTracks);
+  llpTree->Branch("calojetnMatchedPVTracks","std::vector<vector<int>>(nCaloJets)",&calojetnMatchedPVTracks);
   llpTree->Branch("calojetJetArea", calojetJetArea, "calojetJetArea[nCaloJets]/F");
   llpTree->Branch("calojetPileupE", calojetPileupE, "calojetPileupE[nCaloJets]/F");
   llpTree->Branch("calojetPileupId", calojetPileupId, "calojetPileupId[nCaloJets]/F");
@@ -743,7 +747,7 @@ void jet_timing_studies::resetMuonSystemBranches()
     }
     return;
 };
-void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,const edm::EventSetup& iSetup,float &pPVTracksMax, float &alphaMax,float &medianTheta2D,float &medianIP, int &nTracksPV,float &ptAllPVTracks,float &ptAllTracks,float &minDeltaRAllTracks, float &minDeltaRPVTracks)
+void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,const edm::EventSetup& iSetup,vector<double>& ptPVTrack, vector<int>& nMatchedPVTracks, float &pPVTracksMax, float &alphaMax,float &medianTheta2D,float &medianIP, int &nTracksPV,float &ptAllPVTracks,float &ptAllTracks,float &minDeltaRAllTracks, float &minDeltaRPVTracks)
 {
   // int ptPVTracksMax_pvindex = 99;
   int nTracksAll = 0;
@@ -754,6 +758,9 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
   reco::Vertex primaryVertex = vertices->at(0);
   std::vector<double> theta2Ds;
   std::vector<double> IP2Ds;
+
+
+
   for (unsigned int iTrack = 0; iTrack < generalTracks->size(); iTrack ++){
     reco::Track generalTrack = generalTracks->at(iTrack);
     TLorentzVector generalTrackVecTemp;
@@ -799,7 +806,6 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
       double ptPVTracks = 0.;
       double pPVTracks = 0.;
       int nTracksPVTemp = 0;
-      int vertex_i = 0;
       if(!vertex->isValid())continue;
       if (vertex->isFake())continue;
 	    for(auto pvTrack=vertex->tracks_begin(); pvTrack!=vertex->tracks_end(); pvTrack++){
@@ -819,9 +825,9 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
 	        }
 	      }
 	    }
-      // ptPVTrack[vertex_i] = ptPVTracks;
-      // nMatchedPVTracks[vertex_i] = nTracksPVTemp;
-      // vertex_i++;
+
+      ptPVTrack.push_back(ptPVTracks);
+      nMatchedPVTracks.push_back(nTracksPVTemp);
 
       if(pPVTracks > pPVTracksMax){
         pPVTracksMax = pPVTracks;
@@ -866,6 +872,8 @@ void jet_timing_studies::reset_photon_variable()
 void jet_timing_studies::resetCaloJetBranches()
 {
   nCaloJets = 0;
+  calojetptPVTracks.clear();
+  calojetnMatchedPVTracks.clear();
   for ( int i = 0; i < OBJECTARRAYSIZE; i++)
   {
     calojetE[i] = 0.0;
@@ -931,6 +939,8 @@ void jet_timing_studies::resetCaloJetBranches()
 void jet_timing_studies::reset_jet_variables()
 {
   nJets = 0;
+  jetptPVTracks.clear();
+  jetnMatchedPVTracks.clear();
   for ( int i = 0; i < OBJECTARRAYSIZE; i++)
   {
     jetE[i] = 0.0;
@@ -1226,11 +1236,11 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
     float alphaMax(0.0),medianTheta2D(0.0),medianIP(0.0),minDeltaRAllTracks(0.0),minDeltaRPVTracks(0.0),ptAllTracks(0.0), ptAllPVTracks(0.0);
     int nTracksPV(0);
     float pPVTracksMax(0.0);
+    std::vector<double> ptPVTrack;
+    std::vector<int> nMatchedPVTracks;
 
-    // int ptPVTracksMax_pvindex(99);
-    // findTrackingVariables(thisJet,iSetup,alphaMax,medianTheta2D,medianIP,nTracksPV,ptPVTracksMax_pvindex,ptAllPVTracks,ptAllTracks, minDeltaRAllTracks, minDeltaRPVTracks);
 
-    findTrackingVariables(thisJet,iSetup,pPVTracksMax,alphaMax,medianTheta2D,medianIP,nTracksPV,ptAllPVTracks,ptAllTracks, minDeltaRAllTracks, minDeltaRPVTracks);
+    findTrackingVariables(thisJet,iSetup,ptPVTrack,nMatchedPVTracks, pPVTracksMax,alphaMax,medianTheta2D,medianIP,nTracksPV,ptAllPVTracks,ptAllTracks, minDeltaRAllTracks, minDeltaRPVTracks);
     //jetCISV = j.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
     jetAlphaMax[i_jet] = alphaMax;
     jetBetaMax[i_jet] = alphaMax * ptAllTracks/(j.pt());
@@ -1246,6 +1256,8 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
     jetPtAllTracks[i_jet] = ptAllTracks;
     jetMinDeltaRAllTracks[i_jet] = minDeltaRAllTracks;
     jetMinDeltaRPVTracks[i_jet] = minDeltaRPVTracks;
+    jetptPVTracks.push_back(ptPVTrack);
+    jetnMatchedPVTracks.push_back(nMatchedPVTracks);
 
     jetJetArea[i_jet] = j.jetArea();
     jetPileupE[i_jet] = j.pileup();
@@ -1628,10 +1640,12 @@ bool jet_timing_studies::fillCaloJets(const edm::EventSetup& iSetup)
     float alphaMax(0.0),medianTheta2D(0.0),medianIP(0.0),minDeltaRAllTracks(0.0),minDeltaRPVTracks(0.0),ptAllTracks(0.0), ptAllPVTracks(0.0);
     int nTracksPV(0);
     float pPVTracksMax(0.0);
+    std::vector<double> ptPVTrack;
+    std::vector<int> nMatchedPVTracks;
     // int ptPVTracksMax_pvindex(99);
     // findTrackingVariables(thisJet,iSetup,alphaMax,medianTheta2D,medianIP,nTracksPV,ptPVTracksMax_pvindex,ptAllPVTracks,ptAllTracks, minDeltaRAllTracks, minDeltaRPVTracks);
     // std::cout<<"pv index for alpha max: "<<ptPVTracksMax_pvindex<<" pt: "<<calojetPt[nCaloJets]<<std::endl;
-    findTrackingVariables(thisJet,iSetup,pPVTracksMax,alphaMax,medianTheta2D,medianIP,nTracksPV,ptAllPVTracks,ptAllTracks, minDeltaRAllTracks, minDeltaRPVTracks);
+    findTrackingVariables(thisJet,iSetup,ptPVTrack, nMatchedPVTracks, pPVTracksMax,alphaMax,medianTheta2D,medianIP,nTracksPV,ptAllPVTracks,ptAllTracks, minDeltaRAllTracks, minDeltaRPVTracks);
     //jetCISV = j.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
     calojetAlphaMax[nCaloJets] = alphaMax;
     calojetBetaMax[nCaloJets] = alphaMax * ptAllTracks/j.pt();
@@ -1646,6 +1660,11 @@ bool jet_timing_studies::fillCaloJets(const edm::EventSetup& iSetup)
     calojetPtAllTracks[nCaloJets] = ptAllTracks;
     calojetMinDeltaRAllTracks[nCaloJets] = minDeltaRAllTracks;
     calojetMinDeltaRPVTracks[nCaloJets] = minDeltaRPVTracks;
+    calojetptPVTracks.push_back(ptPVTrack);
+    calojetnMatchedPVTracks.push_back(nMatchedPVTracks);
+
+    // calojetptPVTracks[nCaloJets] = ptPVTrack;
+    // calojetnMatchedPVTracks[nCaloJets] = nMatchedPVTracks;
 
     calojetJetArea[nCaloJets] = j.jetArea();
     calojetPileupE[nCaloJets] = j.pileup();

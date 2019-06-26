@@ -145,7 +145,7 @@ public:
   virtual void setBranches();
   void reset_event_variables();
   void resetPVTracksBranches();
-  void findTrackingVariables(const TLorentzVector &jetVec,const edm::EventSetup& iSetup,float &pPVTracksMax,float &alphaMax,float &medianTheta2D,float &medianIP, int &nTracksPV,float &ptAllPVTracks,float &ptAllTracks,float &minDeltaRAllTracks, float &minDeltaRPVTracks);
+  void findTrackingVariables(const TLorentzVector &jetVec,const edm::EventSetup& iSetup,vector<double>& ptPVTrack, vector<int>& nMatchedPVTracks, float &pPVTracksMax,float &alphaMax,float &medianTheta2D,float &medianIP, int &nTracksPV,float &ptAllPVTracks,float &ptAllTracks,float &minDeltaRAllTracks, float &minDeltaRPVTracks);
   void reset_photon_variable();
   void resetCaloJetBranches();
   void reset_jet_variables();
@@ -368,6 +368,8 @@ protected:
   float calojetGammaMax_P[OBJECTARRAYSIZE];
   float calojetGammaMax_EM[OBJECTARRAYSIZE];
   float calojetGammaMax_Hadronic[OBJECTARRAYSIZE];
+  vector<vector<double> > calojetptPVTracks;
+  vector<vector<int> > calojetnMatchedPVTracks;
   float calojet_EMEnergyFraction[OBJECTARRAYSIZE];
   float calojet_HadronicEnergyFraction[OBJECTARRAYSIZE];
   // float calojetCSV[OBJECTARRAYSIZE];
@@ -415,6 +417,8 @@ protected:
   float pfMetEta;
   float pfMetPt;
   float pfMetPhi;
+  vector<vector<double> > jetptPVTracks;
+  vector<vector<int> > jetnMatchedPVTracks;
   float jetE[OBJECTARRAYSIZE];
   float jetEt[OBJECTARRAYSIZE];
   float jetPt[OBJECTARRAYSIZE];
