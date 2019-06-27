@@ -698,6 +698,10 @@ float gParticlePz[GENPARTICLEARRAYSIZE];
 float gParticleEta[GENPARTICLEARRAYSIZE];
 float gParticlePhi[GENPARTICLEARRAYSIZE];
 
+float gParticleProdVertexX[GENPARTICLEARRAYSIZE];
+float gParticleProdVertexY[GENPARTICLEARRAYSIZE];
+float gParticleProdVertexZ[GENPARTICLEARRAYSIZE];
+
 float gParticleDecayVertexX[GENPARTICLEARRAYSIZE];
 float gParticleDecayVertexY[GENPARTICLEARRAYSIZE];
 float gParticleDecayVertexZ[GENPARTICLEARRAYSIZE];
@@ -751,6 +755,15 @@ float genQCD_pt[GENPARTICLEARRAYSIZE];
 float genQCD_eta[GENPARTICLEARRAYSIZE];
 float genQCD_phi[GENPARTICLEARRAYSIZE];
 float genQCD_e[GENPARTICLEARRAYSIZE];
+float genQCD_prod_vertex_x[GENPARTICLEARRAYSIZE];
+float genQCD_prod_vertex_y[GENPARTICLEARRAYSIZE];
+float genQCD_prod_vertex_z[GENPARTICLEARRAYSIZE];
+float genQCD_decay_vertex_x[GENPARTICLEARRAYSIZE];
+float genQCD_decay_vertex_y[GENPARTICLEARRAYSIZE];
+float genQCD_decay_vertex_z[GENPARTICLEARRAYSIZE];
+float genQCD_time[GENPARTICLEARRAYSIZE];
+float genQCD_travel_time[GENPARTICLEARRAYSIZE];
+float genQCD_photon_travel_time[GENPARTICLEARRAYSIZE];
 unsigned int genParticleQCD_match_jet_index[GENPARTICLEARRAYSIZE];
 float genParticleQCD_min_delta_r_match_jet[GENPARTICLEARRAYSIZE];
 
