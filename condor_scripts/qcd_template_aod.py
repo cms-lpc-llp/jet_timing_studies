@@ -2,19 +2,6 @@ import FWCore.ParameterSet.Config as cms
 from FWCore.ParameterSet.VarParsing import VarParsing
 #------ Setup ------#
 
-#Options
-#options = VarParsing ('analysis')
-#options.register('isdata',False,VarParsing.multiplicity.singleton,VarParsing.varType.bool,"")
-#options.register('isfourjet',False,VarParsing.multiplicity.singleton,VarParsing.varType.bool,"")
-#options.register('isqcd',False,VarParsing.multiplicity.singleton,VarParsing.varType.bool,"")
-#options.outputFile = 'jetNtuple.root'
-#options.inputFiles = 'file:/mnt/hadoop/store/group/phys_llp/RunIISummer17_QCD/RunIISummer17DRPremix_QCD_HT300-500_AODSIM_100.txt'
-#options.inputFiles = '/store/mc/RunIISummer17DRPremix/QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/AODSIM/92X_upgrade2017_realistic_v10-v2/00000/BCA5EDA1-50AC-E711-BAB8-0CC47A4C8E8A.root'
-#options.maxEvents = -1
-
-#options.parseArguments()
-
-
 #initialize the process
 process = cms.Process("JetTimingStudies")
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -25,17 +12,16 @@ process.load("Configuration.EventContent.EventContent_cff")
 process.source = cms.Source("PoolSource",
    # fileNames = cms.untracked.vstring(options.inputFiles),
     fileNames = cms.untracked.vstring(
-'file:/mnt/hadoop/store/user/christiw/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vh_withISR_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vh_withISR_mh125_mx50_pl1000_ev100000/crab_CMSSW_8_0_21_ppTohToSS1SS2_SS1Tobb_SS2Tobb_vh_ISR_mh125_mx50_pl1000_ev100000_AOD_CaltechT2_v1/190417_225744/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_step2_1.root',
+'file:/mnt/hadoop/store/mc/RunIIFall17DRPremix/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/AODSIM/94X_mc2017_realistic_v11_ext1-v1/100000/18BB89F2-8E32-E811-80D1-0025902BD8CE.root',
     ),
 )
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-process.MessageLogger.cerr.FwkReport.reportEvery = 10000
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 #TFileService for output
 process.TFileService = cms.Service("TFileService",
-	fileName = cms.string('ntuple_RunIISummer16_bbbb_ggH.root'),
+	fileName = cms.string('ntuple_RunIIFall17_qcd.root'),
     closeFileFast = cms.untracked.bool(True)
 )
 
@@ -76,7 +62,7 @@ process.ntuples = cms.EDAnalyzer('jet_timing_studies',
     isFastsim = cms.bool(False),
     enableTriggerInfo = cms.bool(True),
     enableRecHitInfo = cms.bool(True),
-    readGenVertexTime = cms.bool(False),#needs to be false for glueball samples
+    readGenVertexTime = cms.bool(True),#needs to be false for glueball samples
     isQCD = cms.bool(True),
     model = cms.int32(1),
     genParticles_t0 = cms.InputTag("genParticles", "t0", ""),
