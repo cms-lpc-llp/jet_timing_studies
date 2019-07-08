@@ -2,6 +2,19 @@ import FWCore.ParameterSet.Config as cms
 from FWCore.ParameterSet.VarParsing import VarParsing
 #------ Setup ------#
 
+#Options
+#options = VarParsing ('analysis')
+#options.register('isdata',False,VarParsing.multiplicity.singleton,VarParsing.varType.bool,"")
+#options.register('isfourjet',False,VarParsing.multiplicity.singleton,VarParsing.varType.bool,"")
+#options.register('isqcd',False,VarParsing.multiplicity.singleton,VarParsing.varType.bool,"")
+#options.outputFile = 'jetNtuple.root'
+#options.inputFiles = 'file:/mnt/hadoop/store/group/phys_llp/RunIISummer17_QCD/RunIISummer17DRPremix_QCD_HT300-500_AODSIM_100.txt'
+#options.inputFiles = '/store/mc/RunIISummer17DRPremix/QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/AODSIM/92X_upgrade2017_realistic_v10-v2/00000/BCA5EDA1-50AC-E711-BAB8-0CC47A4C8E8A.root'
+#options.maxEvents = -1
+
+#options.parseArguments()
+
+
 #initialize the process
 process = cms.Process("JetTimingStudies")
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -16,8 +29,9 @@ process.source = cms.Source("PoolSource",
     ),
 )
 
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 #TFileService for output
 process.TFileService = cms.Service("TFileService",
@@ -62,9 +76,10 @@ process.ntuples = cms.EDAnalyzer('jet_timing_studies',
     isFastsim = cms.bool(False),
     enableTriggerInfo = cms.bool(True),
     enableRecHitInfo = cms.bool(True),
-    readGenVertexTime = cms.bool(True),#needs to be false for glueball samples
+    readGenVertexTime = cms.bool(False),#needs to be false for glueball samples
     isQCD = cms.bool(True),
-    isFourJet = cms.bool(False), #false means glueball model, true means four-jet model 
+    model = cms.int32(1),
+
     genParticles_t0 = cms.InputTag("genParticles", "t0", ""),
     triggerPathNamesFile = cms.string("cms_lpc_llp/jet_timing_studies/data/trigger_names_llp_v1.dat"),
     eleHLTFilterNamesFile = cms.string("SUSYBSMAnalysis/RazorTuplizer/data/RazorElectronHLTFilterNames.dat"),
@@ -77,6 +92,7 @@ process.ntuples = cms.EDAnalyzer('jet_timing_studies',
     taus = cms.InputTag("hpsPFTauProducer"),
     photons = cms.InputTag("gedPhotons"),
     jets = cms.InputTag("ak4PFJetsCHS"),
+    jetsCalo = cms.InputTag("ak4CaloJets","","RECO"),
     jetsPuppi = cms.InputTag("ak4PFJets"),
     jetsAK8 = cms.InputTag("ak8PFJetsCHS"),
     mets = cms.InputTag("pfMet"),
