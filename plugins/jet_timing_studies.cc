@@ -256,10 +256,14 @@ void jet_timing_studies::setBranches(){
     llpTree->Branch("jet_pv_rechit_T_Ecut1", jet_pv_rechit_T_Ecut1, "jet_rechit_T_Ecut1[nJets]/F");
     llpTree->Branch("jet_pv_rechit_T_Ecut0p5", jet_pv_rechit_T_Ecut0p5, "jet_rechit_T_Ecut0p5[nJets]/F");
     llpTree->Branch("jet_pv_rechit_T", jet_pv_rechit_T, "jet_rechit_T[nJets]/F");
-    llpTree->Branch("jet_rechits_phi", jet_rechits_phi, "jet_rechits_phi[event_n_rechits]/F");
-    llpTree->Branch("jet_rechits_eta", jet_rechits_eta, "jet_rechits_eta[event_n_rechits]/F");
-    llpTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[event_n_rechits]/F");
-    llpTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[event_n_rechits]/F");
+    // llpTree->Branch("jet_rechits_phi", jet_rechits_phi, "jet_rechits_phi[event_n_rechits]/F");
+    // llpTree->Branch("jet_rechits_eta", jet_rechits_eta, "jet_rechits_eta[event_n_rechits]/F");
+    // llpTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[event_n_rechits]/F");
+    // llpTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[event_n_rechits]/F");
+    llpTree->Branch("jet_rechits_phi","std::vector<vector<double>>(nJets)",&jet_rechits_phi);
+    llpTree->Branch("jet_rechits_eta","std::vector<vector<double>>(nJets)",&jet_rechits_eta);
+    llpTree->Branch("jet_rechits_E","std::vector<vector<double>>(nJets)",&jet_rechits_E);
+    llpTree->Branch("jet_rechits_T","std::vector<vector<double>>(nJets)",&jet_rechits_T);
 
     // llpTree->Branch("jet_rechits_E", jet_rechits_E, "jet_rechits_E[nJets][500]/F");
     // llpTree->Branch("jet_rechits_T", jet_rechits_T, "jet_rechits_T[nJets][500]/F");
@@ -824,10 +828,13 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
       			nTracksPVTemp++;
 	        }
 	      }
-	    }
 
-      ptPVTrack.push_back(ptPVTracks);
-      nMatchedPVTracks.push_back(nTracksPVTemp);
+
+
+	    }
+      ptPVTrack.push_back(ptPVTracks);//pt sum for each vertex
+      nMatchedPVTracks.push_back(nTracksPVTemp);//number of matched tracks for each vertex
+
 
       if(pPVTracks > pPVTracksMax){
         pPVTracksMax = pPVTracks;
@@ -941,6 +948,11 @@ void jet_timing_studies::reset_jet_variables()
   nJets = 0;
   jetptPVTracks.clear();
   jetnMatchedPVTracks.clear();
+  jet_rechits_E.clear();
+  jet_rechits_T.clear();
+  jet_rechits_phi.clear();
+  jet_rechits_eta.clear();
+
   for ( int i = 0; i < OBJECTARRAYSIZE; i++)
   {
     jetE[i] = 0.0;
@@ -1022,17 +1034,17 @@ void jet_timing_studies::reset_jet_variables()
     jet_pv_rechit_T_Ecut1[i] = 0.0;
     jet_pv_rechit_T_Ecut0p5[i] = 0.0;
   }
-  for(int i =0; i < RECHITARRAYSIZE;i++)
-  {
-    // jet_rechits_E[i][j] = -666.;
-    // jet_rechits_T[i][j] = -666.;
-    jet_rechits_E[i] = -666.;
-    jet_rechits_T[i] = -666.;
-    jet_rechits_phi[i] = -666.;
-    jet_rechits_eta[i] = -666.;
-    jet_pv_rechits_T[i] = -666.;
-
-  }
+  // for(int i =0; i < RECHITARRAYSIZE;i++)
+  // {
+  //   // jet_rechits_E[i][j] = -666.;
+  //   // jet_rechits_T[i][j] = -666.;
+  //   jet_rechits_E[i] = -666.;
+  //   jet_rechits_T[i] = -666.;
+  //   jet_rechits_phi[i] = -666.;
+  //   jet_rechits_eta[i] = -666.;
+  //   jet_pv_rechits_T[i] = -666.;
+  //
+  // }
   pfMetPt = 0.0;
   pfMetPhi = 0.0;
   pfMetEta = 0.0;
@@ -1337,6 +1349,10 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
     int n_matched_rechits = 0;
     int n_matched_rechits_Ecut0p5 = 0;
     int n_matched_rechits_Ecut1 = 0;
+    std::vector<double> rechitphi;
+    std::vector<double> rechiteta;
+    std::vector<double> rechite;
+    std::vector<double> rechitt;
 
     for (EcalRecHitCollection::const_iterator recHit = ebRecHits->begin(); recHit != ebRecHits->end(); ++recHit)
     {
@@ -1388,10 +1404,15 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
         // }
         // jet_rechits_E[i_jet][n_matched_rechits] = recHit->energy();
   	    // jet_rechits_T[i_jet][n_matched_rechits] = recHit->time();
-        jet_rechits_phi[n_rechits] = recHitPos.phi();
-        jet_rechits_eta[n_rechits] = recHitPos.eta();
-        jet_rechits_E[n_rechits]= recHit->energy();
-        jet_rechits_T[n_rechits] = recHit->time();
+        // jet_rechits_phi[n_rechits] = recHitPos.phi();
+        // jet_rechits_eta[n_rechits] = recHitPos.eta();
+        // jet_rechits_E[n_rechits]= recHit->energy();
+        // jet_rechits_T[n_rechits] = recHit->time();
+        rechitphi.push_back(recHitPos.phi());
+        rechiteta.push_back(recHitPos.eta());
+        rechite.push_back(recHit->energy());
+        rechitt.push_back(recHit->time());
+
         // if (i_jet != 0 && (recHit->energy() >= 1.0||recHit->energy() == 0.0)){
         //   std::cout << "after: "<< i_jet <<", "<< n_matched_rechits<<", "<<n_matched_rechits_Ecut1<<", "<<jet_rechits_E[i_jet][n_matched_rechits] << ", " <<recHit->energy()<< std::endl;
         // }
@@ -1461,6 +1482,10 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
     jet_n_rechits[i_jet] = n_matched_rechits;
     jet_n_rechits_Ecut1[i_jet] = n_matched_rechits_Ecut1;
     jet_n_rechits_Ecut0p5[i_jet] = n_matched_rechits_Ecut0p5;
+    jet_rechits_phi.push_back(rechitphi);
+    jet_rechits_eta.push_back(rechiteta);
+    jet_rechits_E.push_back(rechite);
+    jet_rechits_T.push_back(rechitt);
 
     if (n_matched_rechits_Ecut1 > 0){
       jet_rechit_T_rms_Ecut1[i_jet] = sqrt(jet_rechit_T_rms_Ecut1[i_jet])/n_matched_rechits_Ecut1;
@@ -1505,9 +1530,9 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
   pfMetE = Met.energy();
   pfMetEta = Met.eta();
   //MC AND GEN LEVEL INFO
-  fillPVTracks();
-  fillMC();
-  fillCaloJets( iSetup );
+  // fillPVTracks();
+  // fillMC();
+  // fillCaloJets( iSetup );
   fillGenParticles();
   fillMuonSystem(iEvent, iSetup);
   //fill_fat_jet( iSetup );

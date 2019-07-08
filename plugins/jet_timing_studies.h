@@ -494,10 +494,15 @@ protected:
   float jet_rechit_T_Ecut1[OBJECTARRAYSIZE];
   float jet_rechit_E_Ecut0p5[OBJECTARRAYSIZE];
   float jet_rechit_T_Ecut0p5[OBJECTARRAYSIZE];
-  float jet_rechits_E[RECHITARRAYSIZE];
-  float jet_rechits_T[RECHITARRAYSIZE];
-  float jet_rechits_eta[RECHITARRAYSIZE];
-  float jet_rechits_phi[RECHITARRAYSIZE];
+  // float jet_rechits_E[RECHITARRAYSIZE];
+  // float jet_rechits_T[RECHITARRAYSIZE];
+  // float jet_rechits_eta[RECHITARRAYSIZE];
+  // float jet_rechits_phi[RECHITARRAYSIZE];
+  vector<vector<double> > jet_rechits_E;
+  vector<vector<double> > jet_rechits_T;
+  vector<vector<double> > jet_rechits_eta;
+  vector<vector<double> > jet_rechits_phi;
+
   float jet_pv_rechit_T_Ecut4[OBJECTARRAYSIZE];
   float jet_pv_rechit_T_Ecut3[OBJECTARRAYSIZE];
   float jet_pv_rechit_T_Ecut2[OBJECTARRAYSIZE];
