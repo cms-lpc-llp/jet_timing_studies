@@ -6,7 +6,7 @@ Long Lived Particle Ntupler based on AOD
 ```bash
 # Done once to setup environment
 cmsrel CMSSW_9_4_4
-cd src
+cd CMSSW_9_4_4/src
 git clone git@github.com:cms-lpc-llp/jet_timing_studies.git cms_lpc_llp/jet_timing_studies
 scram b
 cmsenv
