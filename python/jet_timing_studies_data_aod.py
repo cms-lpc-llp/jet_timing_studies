@@ -32,7 +32,7 @@ process.source = cms.Source("PoolSource",
 
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
-process.MessageLogger.cerr.FwkReport.reportEvery = 10000
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 #TFileService for output
 process.TFileService = cms.Service("TFileService",
@@ -47,9 +47,9 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
 #------ Declare the correct global tag ------#
 
-process.GlobalTag.globaltag = '102X_dataRun2_Sep2018Rereco_v1'
+#process.GlobalTag.globaltag = '102X_dataRun2_Sep2018Rereco_v1'
 
-#process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_v3'
+process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_v3'
 #process.GlobalTag.globaltag = '92X_upgrade2017_realistic_v10'
 
 #------ If we add any inputs beyond standard miniAOD event content, import them here ------#
