@@ -462,6 +462,15 @@ void jet_timing_studies::enableQCDBranches()
   llpTree->Branch("genQCD_pt", genQCD_pt, "genQCD_pt[nGenQCDParticles]/F");
   llpTree->Branch("genQCD_eta", genQCD_eta, "genQCD_eta[nGenQCDParticles]/F");
   llpTree->Branch("genQCD_phi", genQCD_phi, "genQCD_phi[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_prod_vertex_x", genQCD_prod_vertex_x, "genQCD_prod_vertex_x[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_prod_vertex_y", genQCD_prod_vertex_y, "genQCD_prod_vertex_y[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_prod_vertex_z", genQCD_prod_vertex_y, "genQCD_prod_vertex_z[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_decay_vertex_x", genQCD_decay_vertex_x, "genQCD_decay_vertex_x[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_decay_vertex_y", genQCD_decay_vertex_y, "genQCD_decay_vertex_y[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_decay_vertex_z", genQCD_decay_vertex_y, "genQCD_decay_vertex_z[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_time", genQCD_time, "genQCD_time[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_travel_time", genQCD_travel_time, "genQCD_travel_time[nGenQCDParticles]/F");
+  llpTree->Branch("genQCD_photon_travel_time", genQCD_photon_travel_time, "genQCD_photon_travel_time[nGenQCDParticles]/F");
   llpTree->Branch("genParticleQCD_match_jet_index", genParticleQCD_match_jet_index, "genParticleQCD_match_jet_index[nGenQCDParticles]/i");
   llpTree->Branch("genParticleQCD_min_delta_r_match_jet", genParticleQCD_min_delta_r_match_jet, "genParticleQCD_min_delta_r_match_jet[nGenQCDParticles]/F");
 };
@@ -1135,6 +1144,15 @@ void jet_timing_studies::reset_qcd_variables()
     genQCD_e[i] = -666;
     genQCD_eta[i] = -666;
     genQCD_phi[i] = -666;
+    genQCD_prod_vertex_x[i] = -666;
+    genQCD_prod_vertex_y[i] = -666;
+    genQCD_prod_vertex_z[i] = -666;
+    genQCD_decay_vertex_x[i] = -666;
+    genQCD_decay_vertex_y[i] = -666;
+    genQCD_decay_vertex_z[i] = -666;
+    genQCD_time[i] = -666;
+    genQCD_travel_time[i] = -666;
+    genQCD_photon_travel_time[i] = -666;
     genParticleQCD_match_jet_index[i] = 666;
     genParticleQCD_min_delta_r_match_jet[i] = -666.;
   }
@@ -2778,44 +2796,70 @@ bool jet_timing_studies::fillGenParticles(){
     //QCD Matching
     //******************************
     if (isQCD_) {
-      if (abs(gParticleId[i])  <= 6 || abs(gParticleId[i]) == 21)
-      {
-	      if (gParticleStatus[i] == 23)
-	      {
-          const reco::Candidate *tmpParticle = prunedV[i];
-          TLorentzVector tmp;
-          tmp.SetPxPyPzE(tmpParticle->px(), tmpParticle->py(), tmpParticle->pz(), tmpParticle->energy());
-          genQCD_pt[nGenQCDParticles] = tmp.Pt();
-          genQCD_eta[nGenQCDParticles] = tmp.Eta();
-          genQCD_phi[nGenQCDParticles] = tmp.Phi();
-          genQCD_e[nGenQCDParticles]  = tmp.E();
+    if ( (abs(gParticleId[i])  <= 6 || abs(gParticleId[i]) == 21) && gParticleStatus[i] == 23)
+	    {
+		    const reco::Candidate *tmpParticle = prunedV[i];
+		    TLorentzVector tmp;
+		    tmp.SetPxPyPzE(tmpParticle->px(), tmpParticle->py(), tmpParticle->pz(), tmpParticle->energy());
+		    genQCD_pt[nGenQCDParticles] = tmp.Pt();
+		    genQCD_eta[nGenQCDParticles] = tmp.Eta();
+		    genQCD_phi[nGenQCDParticles] = tmp.Phi();
+		    genQCD_e[nGenQCDParticles]  = tmp.E();
 
-          double min_delta_r = 666.;
-          unsigned int match_jet_index = 666;
+		    genQCD_prod_vertex_x[nGenQCDParticles]  = gParticleProdVertexX[i];
+		    genQCD_prod_vertex_y[nGenQCDParticles]  = gParticleProdVertexY[i];
+		    genQCD_prod_vertex_z[nGenQCDParticles]  = gParticleProdVertexZ[i];
 
-          for ( int i_jet = 0; i_jet < nJets; i_jet++ )
-          {
-            double current_delta_r = deltaR(genQCD_eta[nGenQCDParticles], genQCD_phi[nGenQCDParticles], jetEta[i_jet], jetPhi[i_jet]);
-            if ( current_delta_r < min_delta_r )
-            {
-              min_delta_r = current_delta_r;
-              match_jet_index = i_jet;
-            }
-          }//end matching to jets hcal
-          if ( min_delta_r < 0.3 )
-          {
-            genParticleQCD_match_jet_index[nGenQCDParticles] = match_jet_index;
-            genParticleQCD_min_delta_r_match_jet[nGenQCDParticles] = min_delta_r;
-          }
-          nGenQCDParticles ++;
-        }
-      }
+		    genQCD_decay_vertex_x[nGenQCDParticles]  = gParticleDecayVertexX[i];
+		    genQCD_decay_vertex_y[nGenQCDParticles]  = gParticleDecayVertexY[i];
+		    genQCD_decay_vertex_z[nGenQCDParticles]  = gParticleDecayVertexZ[i];
+
+		    double r0 = sqrt( pow(gParticleProdVertexX[i],2) + pow(gParticleProdVertexY[i],2) );
+
+		    double ecal_radius = 129.0;
+		    double t0_ecal = (1./30.)*(ecal_radius-r0)/(tmp.Pt()/tmp.E()); 
+
+		    genQCD_travel_time[nGenQCDParticles]  = t0_ecal;
+
+		    double x0_ecal = gParticleProdVertexX[i] + 30. * (tmp.Px()/tmp.E())*t0_ecal;
+		    double y0_ecal = gParticleProdVertexY[i] + 30. * (tmp.Py()/tmp.E())*t0_ecal;
+		    double z0_ecal = gParticleProdVertexZ[i] + 30. * (tmp.Pz()/tmp.E())*t0_ecal;
+/*
+ * 		    double hcal_radius = 179.0;
+ * 		    		    double t0_hcal = (1./30.)*(hcal_radius-r0)/(tmp.Pt()/tmp.E()); 
+ 		    double x0_hcal = gParticleProdVertexX[i] + 30. * (tmp.Px()/tmp.E())*t0_hcal;
+		    double y0_hcal = gParticleProdVertexY[i] + 30. * (tmp.Py()/tmp.E())*t0_hcal;
+		    double z0_hcal = gParticleProdVertexZ[i] + 30. * (tmp.Pz()/tmp.E())*t0_hcal;
+*/
+		    if( fabs(z0_ecal) < 271.6561246934 && r0 <= ecal_radius)
+		    {
+			double tg_ecal = (1./30) * sqrt(pow(ecal_radius,2)+pow(z0_ecal,2));
+		    	genQCD_photon_travel_time[nGenQCDParticles]  = tg_ecal;
+		    	genQCD_time[nGenQCDParticles]  = genQCD_travel_time[nGenQCDParticles] - genQCD_photon_travel_time[nGenQCDParticles] + genVertexT;
+		    }
 
 
+		    double min_delta_r = 666.;
+		    unsigned int match_jet_index = 666;
 
+		    for ( int i_jet = 0; i_jet < nJets; i_jet++ )
+		    {
+			    double current_delta_r = deltaR(genQCD_eta[nGenQCDParticles], genQCD_phi[nGenQCDParticles], jetEta[i_jet], jetPhi[i_jet]);
+			    if ( current_delta_r < min_delta_r )
+			    {
+				    min_delta_r = current_delta_r;
+				    match_jet_index = i_jet;
+			    }
+		    }//end matching to jets
+		    if ( min_delta_r < 0.3 )
+		    {
+			    genParticleQCD_match_jet_index[nGenQCDParticles] = match_jet_index;
+			    genParticleQCD_min_delta_r_match_jet[nGenQCDParticles] = min_delta_r;
+		    }
+		    nGenQCDParticles ++;
+	    }// quarks or gluons with status 23
+    }// end QCD matching part
 
-
-    }
   }// for loop of genParticles
   return true;
 };
