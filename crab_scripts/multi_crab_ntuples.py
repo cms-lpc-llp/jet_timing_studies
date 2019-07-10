@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     config.section_("JobType")
     config.JobType.pluginName = 'Analysis'
-    config.JobType.psetName = '/afs/cern.ch/work/c/christiw/public/LLP/CMSSW_9_4_4/src/cms_lpc_llp/llp_ntupler/python/llp_ntupler_MC_Summer16.py'
+    config.JobType.psetName = '/data/christiw/LLP/CMSSW_10_2_0/src/cms_lpc_llp/jet_timing_studies/python/jet_timing_studies_data_aod.py'
     config.JobType.numCores = 1
     config.section_("Data")
     config.Data.inputDBS = 'phys03'

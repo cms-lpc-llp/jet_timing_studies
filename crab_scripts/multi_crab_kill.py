@@ -27,22 +27,13 @@ if __name__ == '__main__':
     config.Site.storageSite = 'T2_US_Caltech'
     config.Site.whitelist = ['T2_US_Caltech']
     config.Site.ignoreGlobalBlacklist = True
-    def submit(config):
+    def kill(directory):
         try:
-            crabCommand('submit', config = config)
+            crabCommand('kill', directory)
         except HTTPException as hte:
-            print "Failed submitting task: %s" % (hte.headers)
+            print "Failed killing task: %s" % (hte.headers)
         except ClientException as cle:
-            print "Failed submitting task: %s" % (cle)
-    def resubmit(directory):
-        try:
-            crabCommand('resubmit', directory)
-        except HTTPException as hte:
-            print "Failed resubmitting task: %s" % (hte.headers)
-        except ClientException as cle:
-            print "Failed resubmitting task: %s" % (cle)
-
-
+            print "Failed killing task: %s" % (cle)
 
     #############################################################################################
     ## From now on that's what users should modify: this is the a-la-CRAB2 configuration part. ##
@@ -55,6 +46,6 @@ if __name__ == '__main__':
         config.Data.inputDataset = dataset[i]
         config.Data.outLFNDirBase = '/store/group/phys_exotica/delayedjets/jet_timing_studies/ZeroBias-17Sep2018-v1/'
         #        print("gfal-mkdir -p gsiftp://transfer.ultralight.org/"+config.Data.outLFNDirBase)
-        resubmit(config)
+        kill(config)
 
                                                                         
