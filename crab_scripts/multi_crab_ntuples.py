@@ -16,12 +16,15 @@ if __name__ == '__main__':
     config.JobType.pluginName = 'Analysis'
     config.JobType.psetName = '/data/christiw/LLP/CMSSW_10_2_0/src/cms_lpc_llp/jet_timing_studies/python/jet_timing_studies_data_aod.py'
     config.JobType.numCores = 1
+    config.JobType.allowUndistributedCMSSW = True
     config.section_("Data")
-    config.Data.inputDBS = 'phys03'
-    config.Data.splitting = 'FileBased'
+    config.Data.inputDBS = 'global'
+    config.Data.splitting = 'LumiBased'
     config.Data.unitsPerJob = 10 #when splitting is 'Automatic', this represents jobs target runtime(minimum 180)
+    config.Data.totalUnits = 1
     config.Data.publication = True
     config.Data.ignoreLocality = True
+    config.Data.lumiMask = '/data/christiw/LLP/CMSSW_10_2_0/src/cms_lpc_llp/jet_timing_studies/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
 
     config.section_("Site")
     config.Site.storageSite = 'T2_US_Caltech'
@@ -39,10 +42,11 @@ if __name__ == '__main__':
     ## From now on that's what users should modify: this is the a-la-CRAB2 configuration part. ##
     #############################################################################################
     dataset = ['/ZeroBias/Run2018A-17Sep2018-v1/AOD', '/ZeroBias/Run2018B-17Sep2018-v1/AOD','/ZeroBias/Run2018C-17Sep2018-v1/AOD']
+    name = ['ZeroBias-Run2018A-17Sep2018-v1', 'ZeroBias-Run2018B-17Sep2018-v1','ZeroBias-Run2018C-17Sep2018-v1']
+
 
     for i in range(len(dataset)):
-        spec = mode+"_mh{}_mx{}_pl{}_ev{}".format(mh,mx,pl,ev)
-        config.General.requestName = 'CMSSW_10_2_0_ZeroBias-17Sep2018-v1_jettimingstudies_CaltechT2'
+        config.General.requestName = 'CMSSW_10_2_0_'+name[i]+'_jettimingstudies_CaltechT2'
         config.Data.inputDataset = dataset[i]
         config.Data.outLFNDirBase = '/store/group/phys_exotica/delayedjets/jet_timing_studies/ZeroBias-17Sep2018-v1/'
         #        print("gfal-mkdir -p gsiftp://transfer.ultralight.org/"+config.Data.outLFNDirBase)
