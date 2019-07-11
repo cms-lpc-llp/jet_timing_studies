@@ -12,6 +12,7 @@
 cmsrel CMSSW_10_2_0
 cd CMSSW_10_2_0/src
 git clone git@github.com:cms-lpc-llp/jet_timing_studies.git cms_lpc_llp/jet_timing_studies
+git checkout development
 scram b
 cmsenv
 export SCRAM_ARCH=slc6_amd64_gcc700
@@ -20,8 +21,7 @@ export SCRAM_ARCH=slc6_amd64_gcc700
 source /cvmfs/cms.cern.ch/crab3/crab.sh
 ```
 ### Submit crab jobs
-Make sure ```SCRAM_ARCH``` is ```slc6_amd64_gcc700``` before run
-
+Make sure ```SCRAM_ARCH``` is ```slc6_amd64_gcc700``` before run. Change path of ```config.JobType.psetName``` and ```config.Data.lumiMask```
 ```bash
 # submit Zerobias for 2018A/B/C
 python multi_crab_ntuples.py
