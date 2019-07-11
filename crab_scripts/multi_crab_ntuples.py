@@ -14,17 +14,20 @@ if __name__ == '__main__':
 
     config.section_("JobType")
     config.JobType.pluginName = 'Analysis'
-    config.JobType.psetName = '/data/christiw/LLP/CMSSW_10_2_0/src/cms_lpc_llp/jet_timing_studies/python/jet_timing_studies_data_aod.py'
+    config.JobType.psetName = '/afs/cern.ch/work/c/christiw/public/LLP/CMSSW_10_2_0/src/cms_lpc_llp/jet_timing_studies/python/jet_timing_studies_data_aod.py'
+
+#    config.JobType.psetName = '/data/christiw/LLP/CMSSW_10_2_0/src/cms_lpc_llp/jet_timing_studies/python/jet_timing_studies_data_aod.py'
     config.JobType.numCores = 1
-    config.JobType.allowUndistributedCMSSW = True
     config.section_("Data")
     config.Data.inputDBS = 'global'
     config.Data.splitting = 'LumiBased'
     config.Data.unitsPerJob = 10 #when splitting is 'Automatic', this represents jobs target runtime(minimum 180)
-    config.Data.totalUnits = 1
+    #config.Data.totalUnits = 1
     config.Data.publication = True
     config.Data.ignoreLocality = True
-    config.Data.lumiMask = '/data/christiw/LLP/CMSSW_10_2_0/src/cms_lpc_llp/jet_timing_studies/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+    config.Data.lumiMask = '/afs/cern.ch/work/c/christiw/public/LLP/CMSSW_10_2_0/src/cms_lpc_llp/jet_timing_studies/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+
+ #   config.Data.lumiMask = '/data/christiw/LLP/CMSSW_10_2_0/src/cms_lpc_llp/jet_timing_studies/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
 
     config.section_("Site")
     config.Site.storageSite = 'T2_US_Caltech'
@@ -49,7 +52,6 @@ if __name__ == '__main__':
         config.General.requestName = 'CMSSW_10_2_0_'+name[i]+'_jettimingstudies_CaltechT2'
         config.Data.inputDataset = dataset[i]
         config.Data.outLFNDirBase = '/store/group/phys_exotica/delayedjets/jet_timing_studies/ZeroBias-17Sep2018-v1/'
-        #        print("gfal-mkdir -p gsiftp://transfer.ultralight.org/"+config.Data.outLFNDirBase)
         submit(config)
 
                                                                         
