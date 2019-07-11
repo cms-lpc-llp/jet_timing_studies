@@ -727,11 +727,14 @@ float gLLP_travel_time[LLP_ARRAY_SIZE];
 
 
 float photon_travel_time[LLP_DAUGHTER_ARRAY_SIZE];
+float photon_travel_time_ETL[LLP_DAUGHTER_ARRAY_SIZE];
 float photon_travel_time_pv[LLP_DAUGHTER_ARRAY_SIZE];
 
 float gen_time[LLP_DAUGHTER_ARRAY_SIZE];
+float gen_time_ETL[LLP_DAUGHTER_ARRAY_SIZE];
 float gen_time_pv[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_travel_time[LLP_DAUGHTER_ARRAY_SIZE];
+float gLLP_daughter_travel_time_ETL[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_pt[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_eta[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_phi[LLP_DAUGHTER_ARRAY_SIZE];
@@ -740,6 +743,8 @@ float gLLP_daughter_phi_ecalcorr[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_eta_hcalcorr[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_phi_hcalcorr[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_daughter_e[LLP_DAUGHTER_ARRAY_SIZE];
+bool gLLP_daughter_EB[LLP_DAUGHTER_ARRAY_SIZE];
+bool gLLP_daughter_ETL[LLP_DAUGHTER_ARRAY_SIZE];
 unsigned int gLLP_daughter_match_genJet_index[LLP_DAUGHTER_ARRAY_SIZE];
 float gLLP_min_delta_r_match_genJet[LLP_DAUGHTER_ARRAY_SIZE];
 unsigned int gLLP_daughter_match_jet_index_hcal[LLP_DAUGHTER_ARRAY_SIZE];
@@ -760,6 +765,8 @@ float genQCD_pt[GENPARTICLEARRAYSIZE];
 float genQCD_eta[GENPARTICLEARRAYSIZE];
 float genQCD_phi[GENPARTICLEARRAYSIZE];
 float genQCD_e[GENPARTICLEARRAYSIZE];
+bool genQCD_EB[GENPARTICLEARRAYSIZE];
+bool genQCD_ETL[GENPARTICLEARRAYSIZE];
 float genQCD_prod_vertex_x[GENPARTICLEARRAYSIZE];
 float genQCD_prod_vertex_y[GENPARTICLEARRAYSIZE];
 float genQCD_prod_vertex_z[GENPARTICLEARRAYSIZE];
@@ -767,8 +774,11 @@ float genQCD_decay_vertex_x[GENPARTICLEARRAYSIZE];
 float genQCD_decay_vertex_y[GENPARTICLEARRAYSIZE];
 float genQCD_decay_vertex_z[GENPARTICLEARRAYSIZE];
 float genQCD_time[GENPARTICLEARRAYSIZE];
+float genQCD_time_ETL[GENPARTICLEARRAYSIZE];
 float genQCD_travel_time[GENPARTICLEARRAYSIZE];
+float genQCD_travel_time_ETL[GENPARTICLEARRAYSIZE];
 float genQCD_photon_travel_time[GENPARTICLEARRAYSIZE];
+float genQCD_photon_travel_time_ETL[GENPARTICLEARRAYSIZE];
 unsigned int genParticleQCD_match_jet_index[GENPARTICLEARRAYSIZE];
 float genParticleQCD_min_delta_r_match_jet[GENPARTICLEARRAYSIZE];
 
