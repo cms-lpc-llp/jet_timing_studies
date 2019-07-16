@@ -566,6 +566,7 @@ void jet_timing_studies::enableGenParticleBranches(){
   llpTree->Branch("gLLP_daughter_travel_time", gLLP_daughter_travel_time, "gLLP_daughter_travel_time[4]/F");
   llpTree->Branch("gLLP_daughter_travel_time_ETL", gLLP_daughter_travel_time_ETL, "gLLP_daughter_travel_time_ETL[4]/F");
   llpTree->Branch("gLLP_daughter_pt", gLLP_daughter_pt, "gLLP_daughter_pt[4]/F");
+  llpTree->Branch("gLLP_daughter_pz", gLLP_daughter_pz, "gLLP_daughter_pz[4]/F");
   llpTree->Branch("gLLP_daughter_eta", gLLP_daughter_eta, "gLLP_daughter_eta[4]/F");
   llpTree->Branch("gLLP_daughter_phi", gLLP_daughter_phi, "gLLP_daughter_phi[4]/F");
   llpTree->Branch("gLLP_daughter_eta_ecalcorr", gLLP_daughter_eta_ecalcorr, "gLLP_daughter_eta_ecalcorr[4]/F");
@@ -1092,6 +1093,7 @@ void jet_timing_studies::reset_gen_llp_variable()
   for ( int i = 0; i < LLP_DAUGHTER_ARRAY_SIZE; i++ )
   {
     gLLP_daughter_pt[i] = -666.;
+    gLLP_daughter_pz[i] = -666.;
     gLLP_daughter_eta[i] = -666.;
     gLLP_daughter_phi[i] = -666.;
     gLLP_daughter_eta_ecalcorr[i] = -666.;
@@ -2475,6 +2477,7 @@ bool jet_timing_studies::fillGenParticles(){
             tmp.SetPxPyPzE(tmpParticle->daughter(id)->px(), tmpParticle->daughter(id)->py(), tmpParticle->daughter(id)->pz(), tmpParticle->daughter(id)->energy());
             if(tmp.Pt()<pt_cut) continue;
             gLLP_daughter_pt[id] = tmp.Pt();
+            gLLP_daughter_pz[id] = tmp.Pz();
             gLLP_daughter_eta[id] = tmp.Eta();
             gLLP_daughter_phi[id] = tmp.Phi();
             gLLP_daughter_e[id]  = tmp.E();
@@ -2489,26 +2492,24 @@ bool jet_timing_studies::fillGenParticles(){
             double x_hcal = gLLP_decay_vertex_x[0] + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time_hcal;
             double y_hcal = gLLP_decay_vertex_y[0] + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time_hcal;
             double z_hcal = gLLP_decay_vertex_z[0] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time_hcal;
-    	    std::cout << " gLLP_daughter_travel_time = " << gLLP_daughter_travel_time[id] << "x, y, z" << x_ecal << y_ecal << z_ecal <<std::endl;
+    	    //std::cout << " gLLP_daughter_travel_time = " << gLLP_daughter_travel_time[id] << "x, y, z" << x_ecal << y_ecal << z_ecal <<std::endl;
 
-	    if(tmp.Pz()>=0)
+	    if(tmp.Eta()>=0)
             {
-            gLLP_daughter_travel_time_ETL[id] = (1./30.)*(ETL_z-z)/(tmp.Pz()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
+            gLLP_daughter_travel_time_ETL[id] = (1./30.)*fabs(ETL_z-z)/fabs(tmp.Pz()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
             }
 	    else
             {
-            gLLP_daughter_travel_time_ETL[id] = (1./30.)*(-ETL_z-z)/(tmp.Pz()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
+            gLLP_daughter_travel_time_ETL[id] = (1./30.)*fabs(ETL_z+z)/fabs(tmp.Pz()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
             }
-    	    std::cout << " gLLP_daughter_travel time ETL" << gLLP_daughter_travel_time_ETL[id] << "z" << z << "Pz" << tmp.Pz() <<std::endl;
           //Calculate dt from generation point to ETL face
             double x_etl = gLLP_decay_vertex_x[0] + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time_ETL[id];
             double y_etl = gLLP_decay_vertex_y[0] + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time_ETL[id];
             double z_etl = gLLP_decay_vertex_z[0] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time_ETL[id];
-            double r_etl = sqrt( pow(x_etl,2) + pow(z_etl,2) );
-    	    std::cout << " gLLP_daughter_travel_time_ETL = " << gLLP_daughter_travel_time_ETL[id] << "x, y, z" << x_etl << y_etl << z_etl << r_etl <<std::endl;
+            double r_etl = sqrt( pow(x_etl,2) + pow(y_etl,2) );
 
       //if( fabs(z_ecal) < 10 && radius <= 1)
-            if( fabs(z_ecal) < EB_z && radius <= ecal_radius && z < EE_z)
+            if( fabs(z_ecal) < EB_z && radius <= ecal_radius && fabs(z) < EE_z)
     	    {
 	      gLLP_daughter_EB[id] = true;
     	      photon_travel_time[id] = (1./30) * sqrt(pow(ecal_radius,2)+pow(z_ecal,2));
@@ -2517,12 +2518,14 @@ bool jet_timing_studies::fillGenParticles(){
               gen_time[id] = gLLP_travel_time[0] + gLLP_daughter_travel_time[id] - photon_travel_time[id] + genVertexT;
 
             }
-            else if( r_etl > ETL_rmin && r_etl < ETL_rmax && radius <= ecal_radius && (tmp.Pz() >= 0 && z < ETL_z) || (tmp.Pz()<0 && z > -ETL_z) )
+            else if( r_etl > ETL_rmin && r_etl < ETL_rmax && radius <= ecal_radius && fabs(z) < ETL_z )
     	    {
+    	      //std::cout <<" z_etl = "<< z_etl  <<std::endl;
+    	      //std::cout << " gLLP_daughter_travel time ETL = " << gLLP_daughter_travel_time_ETL[id] << " , z = " << z << " , Pz = " << tmp.Pz() <<std::endl;
 	      gLLP_daughter_ETL[id] = true;
     	      //std::cout << " gLLP_daughter_ETL = " << gLLP_daughter_ETL[id] << "travel time" << gLLP_daughter_travel_time_ETL[id] << "z" << z << "Pz" << tmp.Pz() <<std::endl;
     	      photon_travel_time_ETL[id] = (1./30) * sqrt(pow(r_etl,2)+pow(ETL_z,2));
-    	      std::cout << " gLLP_daughter_ETL = " << gLLP_daughter_ETL[id] << "photon travel time" << photon_travel_time_ETL[id] << "z" << ETL_z << "r" << r_etl <<std::endl;
+    	      //std::cout << " gLLP_daughter_ETL = " << gLLP_daughter_ETL[id] << "photon travel time" << photon_travel_time_ETL[id] << " ,  ETL_z =  " << ETL_z << ", r_etl = " << r_etl <<std::endl;
               gen_time_ETL[id] = gLLP_travel_time[0] + gLLP_daughter_travel_time_ETL[id] - photon_travel_time_ETL[id] + genVertexT;
 
             }
@@ -2697,6 +2700,7 @@ bool jet_timing_studies::fillGenParticles(){
     	      tmp.SetPxPyPzE(tmpParticle->daughter(id)->px(), tmpParticle->daughter(id)->py(), tmpParticle->daughter(id)->pz(), tmpParticle->daughter(id)->energy());
               if(tmp.Pt()<pt_cut) continue;
               gLLP_daughter_pt[id+2] = tmp.Pt();
+              gLLP_daughter_pz[id+2] = tmp.Pz();
     	      gLLP_daughter_eta[id+2] = tmp.Eta();
     	      gLLP_daughter_phi[id+2] = tmp.Phi();
     	      gLLP_daughter_e[id+2]  = tmp.E();
@@ -2713,21 +2717,21 @@ bool jet_timing_studies::fillGenParticles(){
     	      double y_hcal = gLLP_decay_vertex_y[1] + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time_hcal;
     	      double z_hcal = gLLP_decay_vertex_z[1] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time_hcal;
 
-	      if(tmp.Pz()>=0)
+	      if(tmp.Eta()>=0)
               {
-              gLLP_daughter_travel_time_ETL[id+2] = (1./30.)*(ETL_z-z)/(tmp.Pz()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
+              gLLP_daughter_travel_time_ETL[id+2] = (1./30.)*fabs(ETL_z-z)/fabs(tmp.Pz()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
               }
 	      else
               {
-              gLLP_daughter_travel_time_ETL[id+2] = (1./30.)*(-ETL_z-z)/(tmp.Pz()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
+              gLLP_daughter_travel_time_ETL[id+2] = (1./30.)*fabs(ETL_z+z)/fabs(tmp.Pz()/tmp.E());// - (1./30.) * ecal_radius * cosh(tmp.Eta());//1/30 is to convert cm to ns
               }
               //Calculate dt from generation point to ETL face
               double x_etl = gLLP_decay_vertex_x[1] + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time_ETL[id+2];
               double y_etl = gLLP_decay_vertex_y[1] + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time_ETL[id+2];
               double z_etl = gLLP_decay_vertex_z[1] + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time_ETL[id+2];
-              double r_etl = sqrt( pow(x_etl,2) + pow(z_etl,2) );
+              double r_etl = sqrt( pow(x_etl,2) + pow(y_etl,2) );
 
-    	      if( fabs(z_ecal) < EB_z && radius <= ecal_radius && z < EE_z)
+    	      if( fabs(z_ecal) < EB_z && radius <= ecal_radius && fabs(z) < EE_z)
     	      // if( fabs(z_ecal) < 10 && radius <= 0.1)
     	      {
     	      gLLP_daughter_EB[id+2] = true;
@@ -2736,7 +2740,7 @@ bool jet_timing_studies::fillGenParticles(){
               gen_time_pv[id+2] =  gLLP_travel_time[1] + gLLP_daughter_travel_time[id+2] - photon_travel_time_pv[id+2] + genVertexT;
               gen_time[id+2] = gLLP_travel_time[1] + gLLP_daughter_travel_time[id+2] - photon_travel_time[id+2] + genVertexT;
     	      }
-              else if( r_etl > ETL_rmin && r_etl < ETL_rmax && radius <= ecal_radius && (tmp.Pz() >= 0 && z < ETL_z) || (tmp.Pz()<0 && z > -ETL_z) )
+              else if( r_etl > ETL_rmin && r_etl < ETL_rmax && radius <= ecal_radius && fabs(z) < ETL_z )
     	      {
 	        gLLP_daughter_ETL[id+2] = true;
     	        photon_travel_time_ETL[id+2] = (1./30) * sqrt(pow(r_etl,2)+pow(ETL_z,2));
@@ -2913,13 +2917,13 @@ bool jet_timing_studies::fillGenParticles(){
 	
 		    double t0_etl = 0.;
 
-		    if(tmp.Pz()>=0)
+		    if(tmp.Eta()>=0)
     		    {
-		    t0_etl = (1./30.)*(ETL_z-z0)/(tmp.Pz()/tmp.E()); 
+		    t0_etl = (1./30.)*fabs(ETL_z-z0)/fabs(tmp.Pz()/tmp.E()); 
 		    }
 		    else
     		    {
-		    t0_etl = (1./30.)*(-ETL_z-z0)/(tmp.Pz()/tmp.E()); 
+		    t0_etl = (1./30.)*fabs(ETL_z+z0)/fabs(tmp.Pz()/tmp.E()); 
 		    }
 
 		    genQCD_travel_time_ETL[nGenQCDParticles]  = t0_etl;
@@ -2936,14 +2940,14 @@ bool jet_timing_studies::fillGenParticles(){
 		    double y0_hcal = gParticleProdVertexY[i] + 30. * (tmp.Py()/tmp.E())*t0_hcal;
 		    double z0_hcal = gParticleProdVertexZ[i] + 30. * (tmp.Pz()/tmp.E())*t0_hcal;
 */
-		    if( fabs(z0_ecal) < EB_z && r0 <= ecal_radius && z0 < EE_z)
+		    if( fabs(z0_ecal) < EB_z && r0 <= ecal_radius && fabs(z0) < EE_z)
 		    {
 		        genQCD_EB[nGenQCDParticles]  = true;
 			double tg_ecal = (1./30) * sqrt(pow(ecal_radius,2)+pow(z0_ecal,2));
 		    	genQCD_photon_travel_time[nGenQCDParticles]  = tg_ecal;
 		    	genQCD_time[nGenQCDParticles]  = genQCD_travel_time[nGenQCDParticles] - genQCD_photon_travel_time[nGenQCDParticles] + genVertexT;
 		    }
-		    else if( r0_etl > ETL_rmin && r0_etl < ETL_rmax && r0 <= ecal_radius && (tmp.Pz() >= 0 && z0 < ETL_z) || (tmp.Pz() <0 && z0 > -ETL_z) )
+		    else if( r0_etl > ETL_rmin && r0_etl < ETL_rmax && r0 <= ecal_radius &&  fabs(z0) < ETL_z )
 		    {
 		        genQCD_ETL[nGenQCDParticles]  = true;
 			double tg_etl = (1./30) * sqrt(pow(r0_etl,2)+pow(ETL_z,2));
