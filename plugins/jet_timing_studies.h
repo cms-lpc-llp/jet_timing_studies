@@ -584,8 +584,15 @@ protected:
   float cscY[OBJECTARRAYSIZE];
   float cscZ[OBJECTARRAYSIZE];
   float cscNRecHits[OBJECTARRAYSIZE];
+  float cscNRecHits_flag[OBJECTARRAYSIZE];
   float cscT[OBJECTARRAYSIZE];
   float cscChi2[OBJECTARRAYSIZE];
+  vector<vector<int> > cscRechits_quality;
+  vector<vector<float> > cscRechits_energy;
+  vector<vector<int> > cscRechits_badStrip;
+  vector<vector<int> > cscRechits_badWireGroup;
+  vector<vector<float> > cscRechits_errorWithinStrip;
+
 
   int nRpc;
   float rpcPhi[OBJECTARRAYSIZE];

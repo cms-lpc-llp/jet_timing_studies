@@ -303,16 +303,6 @@ void jet_timing_studies::enablePVTracksBranches()
 };
 void jet_timing_studies::enableMuonSystemBranches()
 {
-
-    // csc_Phi = new std::vector<float>;
-    // csc_Eta = new std::vector<float>;
-    // csc_X = new std::vector<float>;
-    // csc_Y = new std::vector<float>;
-    // csc_Z = new std::vector<float>;
-    // csc_NRecHits = new std::vector<float>;
-    // csc_T = new std::vector<float>;
-    // csc_Chi2 = new std::vector<float>;
-
     llpTree->Branch("nCsc",&nCsc,"nCsc/I");
     llpTree->Branch("cscPhi",cscPhi,"cscPhi[nCsc]");
     llpTree->Branch("cscEta",cscEta,"cscEta[nCsc]");
@@ -320,8 +310,15 @@ void jet_timing_studies::enableMuonSystemBranches()
     llpTree->Branch("cscY",cscY,"cscY[nCsc]");
     llpTree->Branch("cscZ",cscZ,"cscZ[nCsc]");
     llpTree->Branch("cscNRecHits",cscNRecHits,"cscNRecHits[nCsc]");
+    llpTree->Branch("cscNRecHits_flag",cscNRecHits_flag,"cscNRecHits_flag[nCsc]");
+
     llpTree->Branch("cscT",cscT,"cscT[nCsc]");
     llpTree->Branch("cscChi2",cscChi2,"cscChi2[nCsc]");
+    llpTree->Branch("cscRechits_quality","std::vector<vector<int>>(nCsc)",&cscRechits_quality);
+    llpTree->Branch("cscRechits_energy","std::vector<vector<float>>(nCsc)",&cscRechits_energy);
+    llpTree->Branch("cscRechits_badStrip","std::vector<vector<int>>(nCsc)",&cscRechits_badStrip);
+    llpTree->Branch("cscRechits_badWireGroup","std::vector<vector<int>>(nCsc)",&cscRechits_badWireGroup);
+    llpTree->Branch("cscRechits_errorWithinStrip","std::vector<vector<float>>(nCsc)",&cscRechits_errorWithinStrip);
 
     llpTree->Branch("nRpc",&nRpc,"nRpc/I");
     llpTree->Branch("rpcPhi",rpcPhi,"rpcPhi[nRpc]");
@@ -733,6 +730,12 @@ void jet_timing_studies::resetPVTracksBranches()
 void jet_timing_studies::resetMuonSystemBranches()
 {
     nCsc = 0;
+
+    cscRechits_quality.clear();
+    cscRechits_energy.clear();
+    cscRechits_badStrip.clear();
+    cscRechits_badWireGroup.clear();
+    cscRechits_errorWithinStrip.clear();
     for ( int i = 0; i < OBJECTARRAYSIZE; i++)
     {
       cscPhi[i] = 0.0;
@@ -741,6 +744,7 @@ void jet_timing_studies::resetMuonSystemBranches()
       cscY[i] = 0.0;
       cscZ[i] = 0.0;
       cscNRecHits[i] = 0.0;
+      cscNRecHits_flag[i] = 0.0;
       cscT[i] = 0.0;
       cscChi2[i] = 0.0;
     }
@@ -1436,7 +1440,7 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
           }
           continue;
         }
-
+        if (abs(recHit->time())>12.5) continue;
         jet_rechit_E[i_jet] += recHit->energy();
         jet_rechit_T[i_jet] += recHit->time()*recHit->energy();
         // if (i_jet != 0 && (recHit->energy() >= 1.0 ||recHit->energy() == 0.0  )){
@@ -1448,10 +1452,16 @@ void jet_timing_studies::analyze(const edm::Event& iEvent, const edm::EventSetup
         // jet_rechits_eta[n_rechits] = recHitPos.eta();
         // jet_rechits_E[n_rechits]= recHit->energy();
         // jet_rechits_T[n_rechits] = recHit->time();
-        rechitphi.push_back(recHitPos.phi());
-        rechiteta.push_back(recHitPos.eta());
-        rechite.push_back(recHit->energy());
-        rechitt.push_back(recHit->time());
+        if (recHit->energy() > 0.5)
+        {
+          rechitphi.push_back(recHitPos.phi());
+          rechiteta.push_back(recHitPos.eta());
+          rechite.push_back(recHit->energy());
+          rechitt.push_back(recHit->time());
+
+
+        }
+
 
         // if (i_jet != 0 && (recHit->energy() >= 1.0||recHit->energy() == 0.0)){
         //   std::cout << "after: "<< i_jet <<", "<< n_matched_rechits<<", "<<n_matched_rechits_Ecut1<<", "<<jet_rechits_E[i_jet][n_matched_rechits] << ", " <<recHit->energy()<< std::endl;
@@ -1613,6 +1623,12 @@ bool jet_timing_studies::fillMuonSystem(const edm::Event& iEvent, const edm::Eve
 	float globY = 0.;
 	float globZ = 0.;
 	float globEta = 0.;
+  std::vector<int> rechits_quality;
+  std::vector<float> rechits_energy;
+  std::vector<int> rechits_badStrip;
+  std::vector<int> rechits_badWireGroup;
+  std::vector<float> rechits_errorWithinStrip;
+
 	CSCDetId id  = (CSCDetId)(cscSegment).cscDetId();
 	LocalPoint segPos = (cscSegment).localPosition();
 	const CSCChamber* cscchamber = cscG->chamber(id);
@@ -1632,6 +1648,35 @@ bool jet_timing_studies::fillMuonSystem(const edm::Event& iEvent, const edm::Eve
 	    cscEta[nCsc] = globEta;
 	    cscT[nCsc] = cscSegment.time();
 	    cscChi2[nCsc] = cscSegment.chi2();
+      const std::vector<CSCRecHit2D> cscrechits2d = cscSegment.specificRecHits();
+
+
+      rechits_quality.clear();
+      rechits_energy.clear();
+      rechits_badStrip.clear();
+      rechits_badWireGroup.clear();
+      rechits_errorWithinStrip.clear();
+      int cscNRecHits_flagged = 0;
+      for (const CSCRecHit2D recHit2d : cscrechits2d) {
+        if (!recHit2d.quality()==1) continue;
+        if(recHit2d.badStrip()) continue;
+        if (recHit2d.badWireGroup()) continue;
+        rechits_quality.push_back(recHit2d.quality());
+        rechits_energy.push_back(recHit2d.energyDepositedInLayer());
+        rechits_badStrip.push_back(recHit2d.badStrip());
+        rechits_badWireGroup.push_back(recHit2d.badWireGroup());
+        rechits_errorWithinStrip.push_back(recHit2d.errorWithinStrip());
+        // std::cout<<cscSegment.nRecHits()<<", " << recHit2d.quality()<<", "<<recHit2d.badStrip()<<", "<<recHit2d.badWireGroup()<<", "<<recHit2d.errorWithinStrip()<<", "<<recHit2d.energyDepositedInLayer()<<std::endl;
+        cscNRecHits_flagged++;
+      }
+      cscNRecHits_flag[nCsc] = cscNRecHits_flagged;
+
+      cscRechits_quality.push_back(rechits_quality);
+      cscRechits_energy.push_back(rechits_energy);
+      cscRechits_badStrip.push_back(rechits_badStrip);
+      cscRechits_badWireGroup.push_back(rechits_badWireGroup);
+      cscRechits_errorWithinStrip.push_back(rechits_errorWithinStrip);
+
 	    nCsc++;
 	}
     }
@@ -2462,7 +2507,7 @@ bool jet_timing_studies::fillGenParticles(){
           double EB_z = 268.36447217; // 129*sinh(1.479)
           double EE_z = 298.5; //where Ecal Endcap starts in z direction
           double ETL_rmin = 30.54540032; //Eta = 3.0, Z = 306cm
-          double ETL_rmax = 128.81130156; //Eta = 1.6, Z = 306cm 
+          double ETL_rmax = 128.81130156; //Eta = 1.6, Z = 306cm
           double ETL_z = 306.0;
           // std::cout << "first llp has "<<tmpParticle->numberOfDaughters()<< " daughters" << std::endl;
           // std::cout << "first llp is "<<i<<","<<gParticleId[i] <<","<< gParticleStatus[i] <<","<<tmpParticle->pdgId()<<","<<tmpParticle->status()<<std::endl;
@@ -2683,7 +2728,7 @@ bool jet_timing_studies::fillGenParticles(){
           double EB_z = 268.36447217; // 129*sinh(1.479)
           double EE_z = 298.5;
           double ETL_rmin = 30.54540032; //Eta = 3.0, Z = 306cm
-          double ETL_rmax = 128.81130156; //Eta = 1.6, Z = 306cm 
+          double ETL_rmax = 128.81130156; //Eta = 1.6, Z = 306cm
           double ETL_z = 306.0;
     	    /*
     	    Second two LLP daughters belong to LLP->pdgID()=36
@@ -2904,26 +2949,26 @@ bool jet_timing_studies::fillGenParticles(){
           	    double EB_z = 268.36447217; // 129*sinh(1.479)
          	    double EE_z = 298.5; //where Ecal Endcap starts in z direction
           	    double ETL_rmin = 30.54540032; //Eta = 3.0, Z = 306cm
-          	    double ETL_rmax = 128.81130156; //Eta = 1.6, Z = 306cm 
+          	    double ETL_rmax = 128.81130156; //Eta = 1.6, Z = 306cm
           	    double ETL_z = 306.0;
 
-		    double t0_ecal = (1./30.)*(ecal_radius-r0)/(tmp.Pt()/tmp.E()); 
+		    double t0_ecal = (1./30.)*(ecal_radius-r0)/(tmp.Pt()/tmp.E());
 
 		    genQCD_travel_time[nGenQCDParticles]  = t0_ecal;
 
 		    double x0_ecal = gParticleProdVertexX[i] + 30. * (tmp.Px()/tmp.E())*t0_ecal;
 		    double y0_ecal = gParticleProdVertexY[i] + 30. * (tmp.Py()/tmp.E())*t0_ecal;
 		    double z0_ecal = gParticleProdVertexZ[i] + 30. * (tmp.Pz()/tmp.E())*t0_ecal;
-	
+
 		    double t0_etl = 0.;
 
 		    if(tmp.Eta()>=0)
     		    {
-		    t0_etl = (1./30.)*fabs(ETL_z-z0)/fabs(tmp.Pz()/tmp.E()); 
+		    t0_etl = (1./30.)*fabs(ETL_z-z0)/fabs(tmp.Pz()/tmp.E());
 		    }
 		    else
     		    {
-		    t0_etl = (1./30.)*fabs(ETL_z+z0)/fabs(tmp.Pz()/tmp.E()); 
+		    t0_etl = (1./30.)*fabs(ETL_z+z0)/fabs(tmp.Pz()/tmp.E());
 		    }
 
 		    genQCD_travel_time_ETL[nGenQCDParticles]  = t0_etl;
@@ -2935,7 +2980,7 @@ bool jet_timing_studies::fillGenParticles(){
 
 /*
  * 		    double hcal_radius = 179.0;
- * 		    		    double t0_hcal = (1./30.)*(hcal_radius-r0)/(tmp.Pt()/tmp.E()); 
+ * 		    		    double t0_hcal = (1./30.)*(hcal_radius-r0)/(tmp.Pt()/tmp.E());
  		    double x0_hcal = gParticleProdVertexX[i] + 30. * (tmp.Px()/tmp.E())*t0_hcal;
 		    double y0_hcal = gParticleProdVertexY[i] + 30. * (tmp.Py()/tmp.E())*t0_hcal;
 		    double z0_hcal = gParticleProdVertexZ[i] + 30. * (tmp.Pz()/tmp.E())*t0_hcal;
