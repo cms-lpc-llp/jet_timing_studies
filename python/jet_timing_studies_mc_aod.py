@@ -25,8 +25,8 @@ process.load("Configuration.EventContent.EventContent_cff")
 process.source = cms.Source("PoolSource",
    # fileNames = cms.untracked.vstring(options.inputFiles),
     fileNames = cms.untracked.vstring(
-'file:/mnt/hadoop/store/user/christiw/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vh_withISR_MC_prod/ppTohToSS1SS2_SS1Tobb_SS2Tobb_vh_withISR_mh125_mx50_pl1000_ev100000/crab_CMSSW_8_0_21_ppTohToSS1SS2_SS1Tobb_SS2Tobb_vh_ISR_mh125_mx50_pl1000_ev100000_AOD_CaltechT2_v1/190417_225744/0000/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_step2_1.root',
-    ),
+       '/store/mc/RunIISummer16DR80Premix/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/7822F8B6-FABE-E611-9F3F-D4AE5269F5FF.root',
+),
 )
 
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -76,7 +76,7 @@ process.ntuples = cms.EDAnalyzer('jet_timing_studies',
     isFastsim = cms.bool(False),
     enableTriggerInfo = cms.bool(True),
     enableRecHitInfo = cms.bool(True),
-    readGenVertexTime = cms.bool(True),#needs to be false for glueball samples
+    readGenVertexTime = cms.bool(False),#needs to be false for glueball samples
     isQCD = cms.bool(True),
     model = cms.int32(1),
     genParticles_t0 = cms.InputTag("genParticles", "t0", ""),

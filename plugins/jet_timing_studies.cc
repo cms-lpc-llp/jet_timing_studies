@@ -781,8 +781,10 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
   int nTracksAll = 0;
   //Displaced jet stuff
   double ptPVTracksMax = 0.;
+  double ptPVTracksOuterMax = 0.;
   minDeltaRAllTracks = 15;
   minDeltaRPVTracks = 15;
+  // minDeltaRPVTracks_outer = 15;
   reco::Vertex primaryVertex = vertices->at(0);
   std::vector<double> theta2Ds;
   std::vector<double> IP2Ds;
@@ -793,6 +795,7 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
     reco::Track generalTrack = generalTracks->at(iTrack);
     TLorentzVector generalTrackVecTemp;
     generalTrackVecTemp.SetPtEtaPhiM(generalTrack.pt(),generalTrack.eta(),generalTrack.phi(),0);
+    // generalTrackVecOuterTemp.SetPtEtaPhiM(generalTrack.pt(),generalTrack.eta(),generalTrack.phi(),0);
 
     if (generalTrack.pt() > 1) {
       if (minDeltaRAllTracks > generalTrackVecTemp.DeltaR(jetVec))
@@ -832,18 +835,31 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
 
 	   for (auto vertex = vertices->begin(); vertex != vertices->end(); vertex++){
       double ptPVTracks = 0.;
+      double ptPVTracks_outer = 0.;
       double pPVTracks = 0.;
+
       int nTracksPVTemp = 0;
+      int nTracksPVOuterTemp = 0;
       if(!vertex->isValid())continue;
       if (vertex->isFake())continue;
 	    for(auto pvTrack=vertex->tracks_begin(); pvTrack!=vertex->tracks_end(); pvTrack++){
-    		TLorentzVector pvTrackVecTemp;
+        // if (!(pvTrack->quality(Track::highPurity))) continue;
+        std::cout<<(*pvTrack)->quality(TrackQuality::highPurity)<<std::endl;
+        HitPattern hitpatterns = (*pvTrack)->hitPattern();
+    		TLorentzVector pvTrackVecTemp, pvTrackVecOuterTemp;
+
     		pvTrackVecTemp.SetPtEtaPhiM((*pvTrack)->pt(),(*pvTrack)->eta(),(*pvTrack)->phi(),0);
+        pvTrackVecOuterTemp.SetPtEtaPhiM((*pvTrack)->pt(),(*pvTrack)->eta(),(*pvTrack)->phi(),0);
+
+        // pvTrackVecOuterTemp.SetPtEtaPhiM((*pvTrack)->outerPt(),(*pvTrack)->outerEta(),(*pvTrack)->outerPhi(),0);
+
+
     		//If pv track associated with jet add pt to ptPVTracks
 	      if ((*pvTrack)->pt() > 1) {
   		    if (minDeltaRPVTracks > pvTrackVecTemp.DeltaR(jetVec))
   		    {
 			       minDeltaRPVTracks =  pvTrackVecTemp.DeltaR(jetVec);
+             // minDeltaRPVTracks_outer =  pvTrackVecOuterTemp.DeltaR(jetVec);
   		    }
 	        if (pvTrackVecTemp.DeltaR(jetVec) < 0.4){
             pPVTracks += (*pvTrack)->p();
@@ -851,6 +867,11 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
       			ptAllPVTracks += (*pvTrack)->pt();
       			nTracksPVTemp++;
 	        }
+          if (pvTrackVecOuterTemp.DeltaR(jetVec) < 0.4){
+      			ptPVTracks_outer += (*pvTrack)->pt();
+      			nTracksPVOuterTemp++;
+	        }
+
 	      }
 
 
@@ -868,7 +889,14 @@ void jet_timing_studies::findTrackingVariables(const TLorentzVector &jetVec,cons
     		nTracksPV = nTracksPVTemp;
         // ptPVTracksMax_pvindex = i;
 	    }
+      if (ptPVTracks_outer > ptPVTracksOuterMax){
+        ptPVTracksOuterMax = ptPVTracks_outer;
+      }
 	    alphaMax = ptPVTracksMax/ptAllTracks;
+      // alphaMax_outer = ptPVTracksOuterMax/
+      std::cout<<ptPVTracksOuterMax<<", "<<ptPVTracksMax<<std::endl;
+      std::cout<<nTracksPVOuterTemp<<", "<<nTracksPVTemp<<std::endl;
+
       // i++;
 
 	   }
@@ -1649,8 +1677,6 @@ bool jet_timing_studies::fillMuonSystem(const edm::Event& iEvent, const edm::Eve
 	    cscT[nCsc] = cscSegment.time();
 	    cscChi2[nCsc] = cscSegment.chi2();
       const std::vector<CSCRecHit2D> cscrechits2d = cscSegment.specificRecHits();
-
-
       rechits_quality.clear();
       rechits_energy.clear();
       rechits_badStrip.clear();
@@ -1658,7 +1684,7 @@ bool jet_timing_studies::fillMuonSystem(const edm::Event& iEvent, const edm::Eve
       rechits_errorWithinStrip.clear();
       int cscNRecHits_flagged = 0;
       for (const CSCRecHit2D recHit2d : cscrechits2d) {
-        if (!recHit2d.quality()==1) continue;
+        if (!(recHit2d.quality()==1)) continue;
         if(recHit2d.badStrip()) continue;
         if (recHit2d.badWireGroup()) continue;
         rechits_quality.push_back(recHit2d.quality());

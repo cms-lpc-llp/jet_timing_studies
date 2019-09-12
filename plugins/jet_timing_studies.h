@@ -80,6 +80,10 @@ using namespace std;
 
 #include "DataFormats/DetId/interface/DetId.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackExtra.h"
+#include "DataFormats/TrackReco/interface/HitPattern.h"
+
 
 //ECAL Rechits
 #include "DataFormats/DetId/interface/DetId.h"
