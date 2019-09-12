@@ -3,9 +3,9 @@ import subprocess, time, sys, shlex
 import fileinput
 
 model = ['bbbb']
-prod = ['vh']
+prod = ['ggh']
 mhmx = [[125,50],[300,125],[500,225],[1000,475],[2000,975]]
-ctau = [1000,10000]
+ctau = [500,1000,10000]
 
 pwd = os.getcwd()
 home_dir = '/mnt/hadoop/store/user/christiw/RunIISummer16_withISR/'
@@ -52,7 +52,8 @@ for i,m in enumerate(model):
 	
 		exe_temp = 'signal_template_aod_job.sh'
 		jbl_temp = 'signal_template_aod_job.jbl'
-		output_dir = '/store/group/phys_exotica/delayedjets/jet_timing_studies/signal/'+m+'/'+h+'/'
+		output_dir = '/store/group/phys_exotica/jmao/jet_timing_studies/samples_plus/signal/'+m+'/'+h+'/'
+		#output_dir = '/store/group/phys_exotica/delayedjets/jet_timing_studies/signal/'+m+'/'+h+'/'
 		output_name = list_name.replace('.list','.root')
 		#print(output_name)
 		with open(exe_temp,'r') as fin_exe:

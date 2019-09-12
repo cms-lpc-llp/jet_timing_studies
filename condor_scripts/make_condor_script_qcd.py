@@ -37,7 +37,7 @@ for i,pts in enumerate(pt_pairs):
 	exe_temp = 'signal_template_aod_job.sh'
 	jbl_temp = 'signal_template_aod_job.jbl'
 	
-	output_dir = '/store/group/phys_exotica/jmao/jet_timing_studies/samples/qcd/'
+	output_dir = '/store/group/phys_exotica/jmao/jet_timing_studies/samples_plus/qcd/'
 	output_name = list_name.replace('.list','.root')
 	#script_name = script_dir+script_name
 	#print(output_name)

@@ -31,12 +31,13 @@ echo "Hello World"
 
 #copy input
 eval `scram unsetenv -sh`
-cd /data/christiw/LLP/CMSSW_9_4_4/src/cms_lpc_llp/jet_timing_studies/condor_scripts
-#cd /data/jmao/CMSSW_9_4_9/src/cms_lpc_llp/jet_timing_studies/condor_scripts
+#cd /data/christiw/LLP/CMSSW_9_4_4/src/cms_lpc_llp/jet_timing_studies/condor_scripts
+cd /data/jmao/CMSSW_9_4_9/src/cms_lpc_llp/jet_timing_studies/condor_scripts
 gfal-copy bbbb_ggh_mh125_mx50_pl500_signal_aod_test.py ${runDir}
 
 #Run cmsenv in an existing CMSSW directory on login-1
-cd /data/christiw/LLP/CMSSW_9_4_4/src
+cd /data/jmao/CMSSW_9_4_9/src
+#cd /data/christiw/LLP/CMSSW_9_4_4/src
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 eval `scramv1 runtime -sh`
 
