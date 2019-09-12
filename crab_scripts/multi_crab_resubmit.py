@@ -56,5 +56,3 @@ if __name__ == '__main__':
         config.Data.outLFNDirBase = '/store/group/phys_exotica/delayedjets/jet_timing_studies/ZeroBias-17Sep2018-v1/'
         #        print("gfal-mkdir -p gsiftp://transfer.ultralight.org/"+config.Data.outLFNDirBase)
         resubmit(config)
-
-                                                                        

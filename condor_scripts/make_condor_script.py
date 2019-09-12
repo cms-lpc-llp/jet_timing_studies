@@ -52,8 +52,9 @@ for i,m in enumerate(model):
 	
 		exe_temp = 'signal_template_aod_job.sh'
 		jbl_temp = 'signal_template_aod_job.jbl'
-		output_dir = '/store/group/phys_exotica/jmao/jet_timing_studies/samples_plus/signal/'+m+'/'+h+'/'
+		#output_dir = '/store/group/phys_exotica/jmao/jet_timing_studies/samples_plus/signal/'+m+'/'+h+'/'
 		#output_dir = '/store/group/phys_exotica/delayedjets/jet_timing_studies/signal/'+m+'/'+h+'/'
+		output_dir = '/store/group/phys_exotica/delayedjets/jet_timing_studies/christiw/signal/'+m+'/'+h+'/'
 		output_name = list_name.replace('.list','.root')
 		#print(output_name)
 		with open(exe_temp,'r') as fin_exe:

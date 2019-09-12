@@ -37,6 +37,17 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 #TFileService for output
 process.TFileService = cms.Service("TFileService",
 	fileName = cms.string('jet_timing_studies_ntuple_bbbb_vh_ISR_mh125_mx50_pl1000_ev100000_ETL_fix_0715.root'),
+),
+)
+
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.MessageLogger.cerr.FwkReport.reportEvery = 10000
+
+#TFileService for output
+process.TFileService = cms.Service("TFileService",
+	fileName = cms.string('jet_timing_studies_ntuple.root'),
+>>>>>>> 0755f4c7f446d430d733fd13763097f74d81e105
     closeFileFast = cms.untracked.bool(True)
 )
 
@@ -77,7 +88,7 @@ process.ntuples = cms.EDAnalyzer('jet_timing_studies',
     isFastsim = cms.bool(False),
     enableTriggerInfo = cms.bool(True),
     enableRecHitInfo = cms.bool(True),
-    readGenVertexTime = cms.bool(True),#needs to be false for glueball samples
+    readGenVertexTime = cms.bool(False),#needs to be false for glueball samples
     isQCD = cms.bool(True),
     model = cms.int32(1),
     genParticles_t0 = cms.InputTag("genParticles", "t0", ""),
